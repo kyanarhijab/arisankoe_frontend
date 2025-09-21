@@ -1,0 +1,77 @@
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(100),
+  email VARCHAR(100),
+  role ENUM('admin', 'user') DEFAULT 'user',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE arisan_groups (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  total_rounds INT NOT NULL,
+  amount DECIMAL(12,2) NOT NULL, -- nilai arisan per orang
+  start_date DATE NOT NULL,
+  status ENUM('active', 'finished') DEFAULT 'active',
+  created_by INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE participants (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  group_id INT,
+  join_date DATE DEFAULT CURRENT_DATE,
+  status ENUM('active', 'resign') DEFAULT 'active',
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (group_id) REFERENCES arisan_groups(id)
+);
+
+CREATE TABLE arisan_rounds (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  group_id INT,
+  round_number INT,
+  draw_date DATE,
+  winner_participant_id INT,
+  notes TEXT,
+  FOREIGN KEY (group_id) REFERENCES arisan_groups(id),
+  FOREIGN KEY (winner_participant_id) REFERENCES participants(id)
+);
+
+CREATE TABLE payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  participant_id INT,
+  round_id INT,
+  amount_paid DECIMAL(12,2),
+  payment_date DATE,
+  status ENUM('paid', 'unpaid', 'late') DEFAULT 'unpaid',
+  notes TEXT,
+  FOREIGN KEY (participant_id) REFERENCES participants(id),
+  FOREIGN KEY (round_id) REFERENCES arisan_rounds(id)
+);
+
+CREATE TABLE draw_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  group_id INT,
+  round_id INT,
+  drawn_by INT,
+  draw_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  winner_participant_id INT,
+  FOREIGN KEY (group_id) REFERENCES arisan_groups(id),
+  FOREIGN KEY (round_id) REFERENCES arisan_rounds(id),
+  FOREIGN KEY (winner_participant_id) REFERENCES participants(id),
+  FOREIGN KEY (drawn_by) REFERENCES users(id)
+);
+
+CREATE TABLE notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  message TEXT,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);

@@ -1,6 +1,7 @@
 <script setup>
-import { useGroupArisanStore } from '@/stores/group_Arisan'
-import { onMounted, ref } from 'vue'
+import { useGroupArisanStore } from '@/stores/group_Arisan';
+import { onMounted, ref } from 'vue';
+import BaseModalForm from "../../components/BaseModalForm.vue";
 
 const store = useGroupArisanStore()
 
@@ -80,32 +81,40 @@ onMounted(store.fetch)
     </VRow>
 
     <!-- Modal Form -->
-    <VDialog v-model="showModal" max-width="500px">
-      <VCard>
-        <VCardTitle>
-          {{ isEdit ? 'Edit Group Arisan' : 'Tambah Group Arisan' }}
-        </VCardTitle>
-        <VCardText>
-          <VForm>
+    <BaseModalForm
+      v-model="showModal"
+      :title="isEdit ? 'Edit Group Arisan' : 'Tambah Group Arisan'"
+      @save="save"
+    >
+      <!-- Isi form lewat slot -->
+      
+      <VRow>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 First Name -->
+          <VCol
+            cols="12"
+            md="3"
+          >
+            <label for="firstName">First Name</label>
+          </VCol>
+
+          <VCol
+            cols="12"
+            md="9"
+          >
             <VTextField
-              v-model="form.nama_group"
-              label="Nama Group"
-              required
+              id="firstName"
+              v-model="firstName"
+              placeholder="John"
+              persistent-placeholder
             />
-            <VTextField
-              v-model="form.keterangan"
-              label="Keterangan"
-            />
-          </VForm>
-        </VCardText>
-        <VCardActions>
-          <VSpacer />
-          <VBtn text @click="showModal = false">Cancel</VBtn>
-          <VBtn color="primary" @click="save">
-            {{ isEdit ? 'Update' : 'Save' }}
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
+          </VCol>
+        </VRow>
+      </VCol>
+      </VRow>
+      
+    </BaseModalForm>
+
   </div>
 </template>
