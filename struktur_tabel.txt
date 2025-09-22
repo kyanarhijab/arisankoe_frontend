@@ -75,3 +75,21 @@ CREATE TABLE notifications (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+Alur Proses Bisnis End-to-End
+
+1.Admin login → autentikasi dari tabel users.
+2.Admin buat grup arisan → data tersimpan di arisan_groups.
+3.Admin tambah peserta → masuk ke tabel participants.
+4.Arisan berjalan tiap periode:
+5.Setoran uang (bisa dicatat di tabel tambahan transaksi/iuran kalau mau lebih detail).
+6.Undian dilakukan → hasil disimpan ke arisan_rounds.
+
+Monitoring:
+
+Laporan grup: siapa saja anggotanya.
+
+Laporan putaran: siapa sudah menang, siapa belum.
+
+Status arisan berubah jadi finished kalau semua putaran selesai.

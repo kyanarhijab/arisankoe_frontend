@@ -15,6 +15,11 @@ export const routes = [
         meta: { title: 'Group Arisan' }
       },
       {
+        path: '/master_data/user',
+        component: () => import('@/pages/master_data/user.vue'),
+        meta: { title: 'User' }
+      },
+      {
         path: 'account-settings',
         component: () => import('@/pages/account-settings.vue'),
       },
