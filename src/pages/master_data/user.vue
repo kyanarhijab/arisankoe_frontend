@@ -10,6 +10,12 @@ const showModal = ref(false)
 const isEdit = ref(false)
 const form = ref({ username: '', password: '', name: '' , email: '' , role: ''   })
 
+//setting password
+const password = ref('')
+const isVisible = ref(false)
+
+function toggle() { isVisible.value = !isVisible.value }
+
 // Buka modal tambah
 function openAdd() {
   form.value = { username: '', password: '', name: '' , email: '' , role: ''  }
@@ -85,11 +91,10 @@ onMounted(store.fetch)
     <!-- Modal Form -->
     <BaseModalForm
       v-model="showModal"
-      :title="isEdit ? 'Edit Group Arisan' : 'Tambah Group Arisan'"
+      :title="isEdit ? 'Edit User' : 'Tambah User'"
       @save="save"
     >
       <!-- Isi form lewat slot -->
-      
       <VRow>
       <VCol cols="12">
         <VRow no-gutters>
@@ -98,19 +103,47 @@ onMounted(store.fetch)
             cols="12"
             md="3"
           >
-            <label for="firstName">First Name</label>
+          <label for="username">Username</label>
           </VCol>
-
           <VCol
             cols="12"
             md="9"
           >
-            <VTextField
-              id="firstName"
-              v-model="firstName"
-              placeholder="John"
-              persistent-placeholder
-            />
+          <VTextField
+            id="username"
+            v-model="username"
+            placeholder="username"
+            persistent-placeholder
+          />
+          </VCol>
+        </VRow>
+      </VCol>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 First Name -->
+          <VCol
+            cols="12"
+            md="3"
+          >
+          <label for="password">Password</label>
+          </VCol>
+          <VCol
+            cols="12"
+            md="9"
+          >
+          <VTextField
+            id="password"
+            v-model="password"
+            :type="isVisible ? 'text' : 'password'"
+            placeholder="......"
+            autocomplete="current-password"
+            :append-inner-icon="isVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
+            @click:append-inner="toggle"
+            hide-details="auto"
+            dense
+            outlined
+            :rules="[v => !!v || 'Password wajib diisi', v => v.length >= 6 || 'Minimal 6 karakter']"
+          />
           </VCol>
         </VRow>
       </VCol>
