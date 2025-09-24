@@ -8,17 +8,29 @@ const store = useUserStore()
 // State Modal + Form
 const showModal = ref(false)
 const isEdit = ref(false)
-const form = ref({ username: '', password: '', name: '' , email: '' , role: ''   })
+const form = ref({ id: null, username: '', password: '', name: '' , email: '' , role: '' })
 
-//setting password
-const password = ref('')
+// Setting password visibility
 const isVisible = ref(false)
-
 function toggle() { isVisible.value = !isVisible.value }
+
+const headers = [
+  { title: 'Username', key: 'username' },
+  { title: 'Name', key: 'name' },
+  { title: 'Password', key: 'password' },
+  { title: 'Email', key: 'email' },
+  { title: 'Role', key: 'role' },
+  { title: 'Aksi', key: 'actions', sortable: false },
+]
+
+const items = [
+  'admin',
+  'anggota'
+]
 
 // Buka modal tambah
 function openAdd() {
-  form.value = { username: '', password: '', name: '' , email: '' , role: ''  }
+  form.value = { id: null, username: '', password: '', name: '' , email: '' , role: '' }
   isEdit.value = false
   showModal.value = true
 }
@@ -64,14 +76,7 @@ onMounted(store.fetch)
 
           <!-- DataTable -->
           <VDataTable
-            :headers="[
-              { text: 'Username', value: 'username' },
-              { text: 'Name', value: 'name' },
-              { text: 'Password', value: 'password' },
-              { text: 'Email', value: 'email' },
-              { text: 'Role', value: 'role' },
-              { text: 'Aksi', value: 'actions', sortable: false }
-            ]"
+            :headers="headers"
             :items="store.items"
             class="elevation-1"
           >
@@ -111,7 +116,7 @@ onMounted(store.fetch)
           >
           <VTextField
             id="username"
-            v-model="username"
+            v-model="form.username"
             placeholder="username"
             persistent-placeholder
           />
@@ -120,7 +125,29 @@ onMounted(store.fetch)
       </VCol>
       <VCol cols="12">
         <VRow no-gutters>
-          <!-- 👉 First Name -->
+          <!-- 👉 name -->
+          <VCol
+            cols="12"
+            md="3"
+          >
+          <label for="name">Name</label>
+          </VCol>
+          <VCol
+            cols="12"
+            md="9"
+          >
+          <VTextField
+            id="name"
+            v-model="form.name"
+            placeholder="name"
+            persistent-placeholder
+          />
+          </VCol>
+        </VRow>
+      </VCol>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 password -->
           <VCol
             cols="12"
             md="3"
@@ -133,9 +160,9 @@ onMounted(store.fetch)
           >
           <VTextField
             id="password"
-            v-model="password"
+            v-model="form.password"
             :type="isVisible ? 'text' : 'password'"
-            placeholder="......"
+            placeholder="password"
             autocomplete="current-password"
             :append-inner-icon="isVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
             @click:append-inner="toggle"
@@ -147,8 +174,54 @@ onMounted(store.fetch)
           </VCol>
         </VRow>
       </VCol>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 email -->
+          <VCol
+            cols="12"
+            md="3"
+          >
+          <label for="email">Email</label>
+          </VCol>
+          <VCol
+            cols="12"
+            md="9"
+          >
+          <VTextField
+            id="email"
+            v-model="form.email"
+            type="email"
+            placeholder="email"
+            persistent-placeholder
+            outlined
+            dense
+            required
+          />
+          </VCol>
+        </VRow>
+      </VCol>
+      <VCol cols="12">
+        <VRow no-gutters>
+          <!-- 👉 email -->
+          <VCol
+            cols="12"
+            md="3"
+          >
+          <label for="role">Role</label>
+          </VCol>
+          <VCol
+            cols="12"
+            md="9"
+          >
+          <VSelect
+          v-model="form.role"
+          :items="items"
+          label="Pilih Role"
+          />
+          </VCol>
+        </VRow>
+      </VCol>
       </VRow>
-      
     </BaseModalForm>
 
   </div>

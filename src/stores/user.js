@@ -7,19 +7,19 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async fetch() {
-      const res = await axios.get('http://localhost/arisankoe-backend/group_arisan.php')
+      const res = await axios.get('http://localhost/arisankoe-backend/user.php')
       this.items = res.data
     },
     async create(data) {
-      await axios.post('http://localhost/arisankoe-backend/group_arisan.php', data)
+      await axios.post('http://localhost/arisankoe-backend/user.php', data)
       this.fetch()
     },
     async update(data) {
-      await axios.put(`http://localhost/arisankoe-backend/group_arisan.php?id=${data.id}`, data)
+      await axios.put(`http://localhost/arisankoe-backend/user.php?id=${data.id}`, data)
       this.fetch()
     },
     async remove(id) {
-      await axios.delete(`http://localhost/arisankoe-backend/group_arisan.php?id=${id}`)
+      await axios.delete(`http://localhost/arisankoe-backend/user.php?id=${id}`)
       this.fetch()
     },
   },
