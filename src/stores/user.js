@@ -1,4 +1,5 @@
 import axios from '@/services/api'
+import { useNotifyStore } from '@/stores/notify'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
@@ -7,20 +8,42 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async fetch() {
-      const res = await axios.get('http://localhost/arisankoe-backend/user.php')
+      const res = await axios.get('user.php')
       this.items = res.data
     },
     async create(data) {
-      await axios.post('http://localhost/arisankoe-backend/user.php', data)
-      this.fetch()
+      try {
+        await axios.post('user.php', data)
+        useNotifyStore().notify('User berhasil ditambahkan')
+        this.fetch()
+      } catch (err) {
+        useNotifyStore().notify('Gagal menambahkan user', 'error')
+      }
     },
     async update(data) {
-      await axios.put(`http://localhost/arisankoe-backend/user.php?id=${data.id}`, data)
-      this.fetch()
+
+
+      try {
+        await axios.put(`user.php?user=${data.username}`, data)
+        useNotifyStore().notify('User berhasil diupdate!','success')
+        this.fetch()
+      } catch (err) {
+        useNotifyStore().notify('Gagal update user', 'error')
+      }
+
+     
     },
-    async remove(id) {
-      await axios.delete(`http://localhost/arisankoe-backend/user.php?id=${id}`)
-      this.fetch()
+    async remove(username) {
+
+      try {
+        await axios.delete(`user.php?user=${username}`)
+        useNotifyStore().notify('User berhasil dihapus!','success')
+        this.fetch()
+      } catch (err) {
+        useNotifyStore().notify('Gagal hapus user', 'error')
+      }
+
+     
     },
   },
 })

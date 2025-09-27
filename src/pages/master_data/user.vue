@@ -53,9 +53,9 @@ async function save() {
 }
 
 // Hapus data
-async function del(id) {
+async function del(username) {
   if (confirm('Yakin hapus data ini?')) {
-    await store.remove(id)
+    await store.remove(username)
   }
 }
 
@@ -84,7 +84,7 @@ onMounted(store.fetch)
               <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">
                 Edit
               </VBtn>
-              <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">
+              <VBtn size="small" color="error" variant="outlined" @click="del(item.username)">
                 Delete
               </VBtn>
             </template>
