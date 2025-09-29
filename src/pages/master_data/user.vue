@@ -105,7 +105,7 @@ onMounted(store.fetch)
         <VRow>
           <VCol cols="12">
             <VRow no-gutters>
-              <!-- 👉 First Name -->
+              <!-- 👉 Username -->
               <VCol cols="12" md="3">
                 <label for="username">Username</label>
               </VCol>
@@ -157,7 +157,7 @@ onMounted(store.fetch)
           </VCol>
           <VCol cols="12">
             <VRow no-gutters>
-              <!-- 👉 email -->
+              <!-- 👉 role -->
               <VCol cols="12" md="3">
                 <label for="role">Role</label>
               </VCol>
