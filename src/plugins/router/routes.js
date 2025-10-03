@@ -7,17 +7,22 @@ export const routes = [
       {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
-        meta: { title: 'Dashboard' }
+        meta: { title: 'Dashboard' , requiresAuth: true }
       },
       {
         path: '/master_data/group_arisan',
-        component: () => import('@/pages/master_data/groupArisan.vue'),
+        component: () => import('@/pages/master_data/group_Arisan.vue'),
         meta: { title: 'Group Arisan' }
       },
       {
         path: '/master_data/user',
         component: () => import('@/pages/master_data/user.vue'),
         meta: { title: 'User' }
+      },
+      {
+        path: '/master_data/participants',
+        component: () => import('@/pages/master_data/participants.vue'),
+        meta: { title: 'Participants' }
       },
       {
         path: 'account-settings',

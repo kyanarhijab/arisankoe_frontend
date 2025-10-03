@@ -3,7 +3,7 @@ import api from '@/services/api'
 import { useNotifyStore } from '@/stores/notify'
 import { defineStore } from 'pinia'
 
-export const useGroupArisanStore = defineStore('groupArisan', {
+export const useParticipantsStore = defineStore('participants', {
   state: () => ({
     items: [],
     loading: false,

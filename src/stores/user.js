@@ -14,7 +14,7 @@ export const useUserStore = defineStore('user', {
     async create(data) {
       try {
         await axios.post('user.php', data)
-        useNotifyStore().notify('User berhasil ditambahkan')
+        useNotifyStore().notify('Action completed successfully ✅','success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal menambahkan user', 'error')
@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
 
       try {
         await axios.put(`user.php?user=${data.username}`, data)
-        useNotifyStore().notify('User berhasil diupdate!','success')
+        useNotifyStore().notify('Action completed successfully ✅','success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal update user', 'error')
@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', {
 
       try {
         await axios.delete(`user.php?user=${username}`)
-        useNotifyStore().notify('User berhasil dihapus!','success')
+        useNotifyStore().notify('Action completed successfully ✅','success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal hapus user', 'error')

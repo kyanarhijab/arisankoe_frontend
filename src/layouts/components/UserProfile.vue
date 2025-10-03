@@ -1,33 +1,16 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png';
 
-import { onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const user = ref(null)
+const auth = useAuthStore()
+const { user, isAuthenticated } = storeToRefs(auth)
+const router = useRouter() 
 
-onMounted(() => {
-  // Cek autentikasi
-  const token = localStorage.getItem('token')
-  if (!token) {
-    router.push('/login')
-    return
-  }
-
-  console.log('User loaded:', user.value)
-
-  // Ambil data user
-  const userData = localStorage.getItem('user')
-  if (userData) {
-    user.value = JSON.parse(userData)
-  }
-
-})
-
-const logout = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
+function handleLogout() {
+  auth.logout()
   router.push('/login')
 }
 
@@ -80,10 +63,10 @@ const logout = () => {
               </VListItemAction>
             </template>
 
-            <VListItemTitle class="font-weight-semibold">
-              John Doe
+            <VListItemTitle class="font-weight-semibold" v-if="isAuthenticated">
+              Halo, {{ user?.name }}
             </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemSubtitle>{{ user?.role }}</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
@@ -143,7 +126,7 @@ const logout = () => {
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem @click="logout">
+          <VListItem @click="handleLogout">
             <template #prepend>
               <VIcon
                 class="me-2"

@@ -3,20 +3,23 @@ import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
     token: localStorage.getItem('token') || ''
   }),
+  getters: {
+    isAuthenticated: (state) => !!state.token,
+  },
   actions: {
     async login(username, password) {
       try {
-        const res = await axios.post('http://localhost/arisankoe-backend/auth/Login.php', {
-            username,
-            password
-        })
-
+        const res = await axios.post(
+          'http://localhost/arisankoe-backend/auth/Login.php',
+          { username, password }
+        )
+  
         this.token = res.data.token
         this.user = res.data.user
-
+  
         localStorage.setItem('token', this.token)
         localStorage.setItem('user', JSON.stringify(res.data.user))
       } catch (error) {
@@ -24,12 +27,12 @@ export const useAuthStore = defineStore('auth', {
         throw error
       }
     },
-
+  
     logout() {
       this.user = null
       this.token = ''
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-    }
+    },
   }
 })
