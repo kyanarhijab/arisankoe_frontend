@@ -110,8 +110,8 @@ onMounted(store.fetch)
           <!-- DataTable -->
           <VDataTable :headers="headers" :items="store.items" class="elevation-1">
             <template #item.amount="{ item }">
-  {{ formatRupiah(item.amount) }}
-</template>
+                    {{ formatRupiah(item.amount) }}
+            </template>
             <template #item.actions="{ item }">
               <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">
                 Edit
