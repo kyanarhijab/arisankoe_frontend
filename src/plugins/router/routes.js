@@ -1,3 +1,7 @@
+import { createRouter, createWebHistory } from 'vue-router'
+// Import route dari tiap modul
+import groupArisanRoutes from '@/modules/MasterData/GroupArisan/index.js'
+import userRoutes from '@/modules/MasterData/User/index.js'
 export const routes = [
   { path: '/', redirect: '/login' },
   {
@@ -9,21 +13,8 @@ export const routes = [
         component: () => import('@/pages/dashboard.vue'),
         meta: { title: 'Dashboard' , requiresAuth: true }
       },
-      {
-        path: '/master_data/group_arisan',
-        component: () => import('@/pages/master_data/group_Arisan.vue'),
-        meta: { title: 'Group Arisan' }
-      },
-      {
-        path: '/master_data/user',
-        component: () => import('@/pages/master_data/user.vue'),
-        meta: { title: 'User' }
-      },
-      {
-        path: '/master_data/participants',
-        component: () => import('@/pages/master_data/participants.vue'),
-        meta: { title: 'Participants' }
-      },
+      ...groupArisanRoutes,
+      ...userRoutes,
       {
         path: 'account-settings',
         component: () => import('@/pages/account-settings.vue'),
@@ -70,3 +61,10 @@ export const routes = [
     ],
   },
 ]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+export default router

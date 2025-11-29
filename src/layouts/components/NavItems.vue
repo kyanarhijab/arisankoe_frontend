@@ -3,13 +3,12 @@ import VerticalNavGroup from '@layouts/components/VerticalNavGroup.vue';
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue';
 
 import { useMenuStore } from '@/stores/menu';
-import { onMounted } from 'vue';
 
 const menuStore = useMenuStore()
 
-onMounted(() => {
-  menuStore.fetchMenus()
-})
+// onMounted(() => {
+//   menuStore.fetchMenus()
+// })
 
 const hasChildren = item => !!item.children && Array.isArray(item.children) && item.children.length > 0
 </script>

@@ -14,11 +14,14 @@ declare module 'vue' {
     CardStatisticsWithImages: typeof import('./src/@core/components/cards/CardStatisticsWithImages.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     GlobalError: typeof import('./src/components/GlobalError.vue')['default']
+    GroupArisanForm: typeof import('./src/components/ModalMaster/GroupArisanForm.vue')['default']
+    GroupForm: typeof import('./src/components/ModalMaster/GroupForm.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
     UpgradeToPro: typeof import('./src/components/UpgradeToPro.vue')['default']
+    UserArisanForm: typeof import('./src/components/ModalMaster/UserArisanForm.vue')['default']
     VueApexCharts: typeof import('vue3-apexcharts')['default']
   }
 }
