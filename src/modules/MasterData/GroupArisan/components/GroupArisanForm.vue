@@ -1,5 +1,5 @@
 <template>
-  <VForm ref="formRef" class="pa-4">
+   <VForm ref="formRef" class="pa-4" lazy-validation>
     <VContainer fluid>
       <VRow
         v-for="field in fields"
@@ -18,13 +18,13 @@
         <VCol cols="12" md="9">
           <!-- TextField umum -->
           <VTextField
-            v-if="field.component === 'VTextField' && field.model !== 'amount'"
+            v-if="field.component === 'VTextField'"
             :id="field.id"
             v-model="formModel[field.model]"
             v-bind="field.props"
             variant="outlined"
             density="compact"
-            hide-details
+            hide-details="auto"
           />
 
           <!-- TextField khusus Amount (format Rupiah) -->
@@ -56,29 +56,37 @@
 
 <script setup>
 import { formatRupiah } from '@/utils/formatRupiah'
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
   isEdit: Boolean,
 })
-const emit = defineEmits(['update:modelValue'])
-const formRef = ref(null) 
 
-// Reactive clone dari form agar bisa diedit tanpa langsung ubah props
+const emit = defineEmits(['update:modelValue'])
+
+const formRef = ref(null)
+
+// Clone model
 const formModel = reactive({ ...props.modelValue })
 
-// Sinkronisasi dua arah (v-model)
+// Sinkronisasi parent → child
 watch(
   () => props.modelValue,
   val => Object.assign(formModel, val),
   { deep: true }
 )
+
+// Sinkronisasi child → parent
 watch(
-  () => formModel,
-  val => emit('update:modelValue', val),
+  formModel,
+  val => emit('update:modelValue', { ...val }),
   { deep: true }
 )
+
+const rules = {
+  required: v => !!v || "Wajib diisi"
+}
 
 // 💰 Format amount jadi rupiah
 const amountFormatted = computed({
@@ -90,25 +98,27 @@ const amountFormatted = computed({
 
 // Daftar field
 const fields = [
-  { id: 'kode', label: 'Kode', model: 'kode', component: 'VTextField', props: { placeholder: 'Kode', disabled: props.isEdit } },
-  { id: 'name', label: 'Name', model: 'name', component: 'VTextField', props: { placeholder: 'Name' } },
-  { id: 'description', label: 'Description', model: 'description', component: 'VTextField', props: { placeholder: 'Description' } },
-  { id: 'total_rounds', label: 'Total Rounds', model: 'total_rounds', component: 'VTextField', props: { type: 'number', placeholder: 'Total Rounds' } },
-  { id: 'amount', label: 'Amount', model: 'amount', component: 'VTextField', props: { placeholder: 'Nominal Arisan' } },
-  { id: 'start_date', label: 'Start Date', model: 'start_date', component: 'VTextField', props: { type: 'date', placeholder: 'Tanggal Mulai' } },
-  { id: 'status', label: 'Status', model: 'status', component: 'VSelect', props: { items: ['active', 'finished'], placeholder: 'Pilih Status' } },
+  { id: 'kode', label: 'Kode', model: 'kode', component: 'VTextField', props: { placeholder: 'Kode', disabled: props.isEdit , rules: [rules.required] } },
+  { id: 'name', label: 'Name', model: 'name', component: 'VTextField', props: { placeholder: 'Name' , rules: [rules.required] } },
+  { id: 'description', label: 'Description', model: 'description', component: 'VTextField', props: { placeholder: 'Description' , rules: [rules.required] } },
+  { id: 'total_rounds', label: 'Total Rounds', model: 'total rounds', component: 'VTextField', props: { type: 'number', placeholder: 'Total Rounds' , rules: [rules.required] } },
+  { id: 'amount', label: 'Amount', model: 'amount', component: 'VTextField', props: { placeholder: 'Nominal Arisan' , rules: [rules.required] } },
+  { id: 'start_date', label: 'Start Date', model: 'start_date', component: 'VTextField', props: { type: 'date', placeholder: 'Tanggal Mulai' , rules: [rules.required] } },
+  { id: 'status', label: 'Status', model: 'status', component: 'VSelect', props: { items: ['active', 'finished'], placeholder: 'Pilih Status' , rules: [rules.required] } },
 ]
 
-// ✅ expose ke parent supaya bisa dipanggil
 defineExpose({
-  validate: async () => {
+  formData: formModel,
+
+  async validate() {
     if (!formRef.value) return { valid: false }
-    const valid = await formRef.value.validate()
-    return { valid }
+    const result = await formRef.value.validate()
+    return { valid: result.valid }
   },
-  resetValidation: () => {
-    if (formRef.value?.resetValidation) formRef.value.resetValidation()
-  },
+
+  resetValidation() {
+    formRef.value?.resetValidation()
+  }
 })
 
 </script>

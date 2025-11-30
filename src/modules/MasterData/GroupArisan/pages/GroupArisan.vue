@@ -1,16 +1,18 @@
 <script setup>
 import BaseModalForm from '@/components/BaseModalForm.vue'
-import GroupForm from '@/modules/MasterData/GroupArisan/components/GroupArisanForm.vue'
+import GroupArisanForm from '@/modules/MasterData/GroupArisan/components/GroupArisanForm.vue'
 import { useGroupArisanStore } from '@/modules/MasterData/GroupArisan/stores/GroupArisan'
 import { formatRupiah } from '@/utils/formatRupiah'
 import { onMounted, ref } from 'vue'
-
 
 const store = useGroupArisanStore()
 const search = ref('')
 const showModal = ref(false)
 const isEdit = ref(false)
-const formRef = ref(null) // ✅ Tambah ini
+
+// ⭐ Tambahkan ini
+const formRef = ref(null)
+
 const form = ref({
   kode: null,
   name: '',
@@ -33,7 +35,15 @@ const headers = [
 ]
 
 function openAdd() {
-  Object.assign(form.value, { kode: null, name: '', description: '', total_rounds: '', amount: '', start_date: '', status: '' })
+  Object.assign(form.value, {
+    kode: null,
+    name: '',
+    description: '',
+    total_rounds: '',
+    amount: '',
+    start_date: '',
+    status: '',
+  })
   isEdit.value = false
   showModal.value = true
 }
@@ -44,34 +54,37 @@ function openEdit(item) {
   showModal.value = true
 }
 
-async function save() {
-  if (!formRef.value) return console.error('Reference not connected')
+const save = async () => {
+  // ⭐ VALIDASI LANGSUNG dari UserForm
   const { valid } = await formRef.value.validate()
-  if (!valid) return console.warn('Invalid form submission')
+
+  if (!valid) {
+    console.warn("Invalid form submission")
+    return
+  }
+
+  const data = { ...form.value }
 
   try {
-    if (isEdit.value) {
-      await store.update(form.value)
-    } else {
-      await store.create(form.value)
-    }
+    if (isEdit.value) await store.update(data)
+    else await store.create(data)
 
-    // ✅ Tutup modal & refresh data
     showModal.value = false
     await store.fetch()
+
   } catch (err) {
-    console.error('Unable to save the data:', err)
+    console.error("Gagal menyimpan:", err)
   }
 }
 
 async function del(kode) {
-  if (confirm('Are you sure you want to remove this item ?')) {
+  if (confirm('Are you sure you want to remove this item?')) {
     await store.remove(kode)
     await store.fetch()
   }
 }
 
-onMounted(store.fetch)
+onMounted(() => store.fetch())
 </script>
 
 <template>
@@ -79,25 +92,60 @@ onMounted(store.fetch)
     <VCardTitle class="d-flex justify-space-between align-center">
       <span>Master Group Arisan</span>
       <div class="d-flex align-center gap-2">
-        <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line" variant="solo-filled"
-          density="compact" hide-details style="max-width: 220px" />
-        <VBtn color="primary" @click="openAdd">+ Add</VBtn>
+        <VTextField
+          v-model="search"
+          placeholder="Search..."
+          prepend-inner-icon="ri-search-2-line"
+          variant="solo-filled"
+          density="compact"
+          hide-details
+          style="max-width: 220px"
+        />
+        <VBtn
+          color="primary"
+          @click="openAdd"
+          >+ Add</VBtn
+        >
       </div>
     </VCardTitle>
 
-    <VDataTable :headers="headers" :items="store.items" :search="search" class="elevation-1" density="comfortable">
+    <VDataTable
+      :headers="headers"
+      :items="store.items"
+      :search="search"
+      class="elevation-1"
+      density="comfortable"
+    >
       <template #item.amount="{ item }">
         {{ formatRupiah(item.amount) }}
       </template>
 
       <template #item.actions="{ item }">
-        <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
-        <VBtn size="small" color="error" variant="outlined" @click="del(item.kode)">Delete</VBtn>
+        <VBtn
+          size="small"
+          color="primary"
+          variant="outlined"
+          class="me-2"
+          @click="openEdit(item)"
+          >Edit</VBtn
+        >
+        <VBtn
+          size="small"
+          color="error"
+          variant="outlined"
+          @click="del(item.kode)"
+          >Delete</VBtn
+        >
       </template>
     </VDataTable>
 
-    <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit Group' : 'Tambah Group'" @save="save">
-      <GroupForm ref="formRef" v-model="form" :is-edit="isEdit" />
+    <BaseModalForm
+      v-model="showModal"
+      :title="isEdit ? 'Edit Group' : 'Add Group'"
+      @save="save"
+    >
+      <!-- ⭐ TARUH REF DISINI -->
+      <GroupArisanForm v-model="form" :isEdit="isEdit" ref="formRef" />
     </BaseModalForm>
   </VCard>
 </template>
