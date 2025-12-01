@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // Import route dari tiap modul
 import groupArisanRoutes from '@/modules/MasterData/GroupArisan/index.js'
+import ParticipantsRoutes from '@/modules/MasterData/Participants/index.js'
 import userRoutes from '@/modules/MasterData/User/index.js'
 export const routes = [
   { path: '/', redirect: '/login' },
@@ -15,6 +16,7 @@ export const routes = [
       },
       ...groupArisanRoutes,
       ...userRoutes,
+      ...ParticipantsRoutes,
       {
         path: 'account-settings',
         component: () => import('@/pages/account-settings.vue'),
