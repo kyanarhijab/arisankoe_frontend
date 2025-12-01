@@ -1,5 +1,9 @@
 <template>
-   <VForm ref="formRef" class="pa-4" lazy-validation>
+  <VForm
+    ref="formRef"
+    class="pa-4"
+    lazy-validation
+  >
     <VContainer fluid>
       <VRow
         v-for="field in fields"
@@ -8,35 +12,44 @@
         no-gutters
       >
         <!-- Label kiri -->
-        <VCol cols="12" md="3" class="text-md-right pr-md-4 pb-1 pb-md-0">
-          <label :for="field.id" class="font-weight-medium text-caption text-grey-darken-1">
+        <VCol
+          cols="12"
+          md="3"
+          class="text-md-right pr-md-4 pb-1 pb-md-0"
+        >
+          <label
+            :for="field.id"
+            class="font-weight-medium text-caption text-grey-darken-1"
+          >
             {{ field.label }}
           </label>
         </VCol>
 
         <!-- Input kanan -->
-        <VCol cols="12" md="9">
-          <!-- TextField umum -->
-          <VTextField
-            v-if="field.component === 'VTextField'"
-            :id="field.id"
-            v-model="formModel[field.model]"
-            v-bind="field.props"
-            variant="outlined"
-            density="compact"
-            hide-details="auto"
-          />
+        <VCol
+          cols="12"
+          md="9"
+        >
 
-          <!-- TextField khusus Amount (format Rupiah) -->
-          <VTextField
-            v-else-if="field.model === 'amount'"
-            :id="field.id"
-            v-model="amountFormatted"
-            variant="outlined"
-            density="compact"
-            hide-details
-            v-bind="field.props"
-          />
+          <!-- Input Amount (hanya satu!) -->
+<VTextField
+  v-if="field.model === 'amount'"
+  v-model="amountFormatted"
+  variant="outlined"
+  density="compact"
+  hide-details="auto"
+  v-bind="field.props"
+/>
+
+<!-- Input TextField umum (kecuali amount) -->
+<VTextField
+  v-else-if="field.component === 'VTextField'"
+  v-model="formModel[field.model]"
+  variant="outlined"
+  density="compact"
+  hide-details="auto"
+  v-bind="field.props"
+/>
 
           <!-- Select -->
           <VSelect
@@ -74,18 +87,14 @@ const formModel = reactive({ ...props.modelValue })
 watch(
   () => props.modelValue,
   val => Object.assign(formModel, val),
-  { deep: true }
+  { deep: true },
 )
 
 // Sinkronisasi child → parent
-watch(
-  formModel,
-  val => emit('update:modelValue', { ...val }),
-  { deep: true }
-)
+watch(formModel, val => emit('update:modelValue', { ...val }), { deep: true })
 
 const rules = {
-  required: v => !!v || "Wajib diisi"
+  required: v => !!v || 'Wajib diisi',
 }
 
 // 💰 Format amount jadi rupiah
@@ -98,13 +107,58 @@ const amountFormatted = computed({
 
 // Daftar field
 const fields = [
-  { id: 'kode', label: 'Kode', model: 'kode', component: 'VTextField', props: { placeholder: 'Kode', disabled: props.isEdit , rules: [rules.required] } },
-  { id: 'name', label: 'Name', model: 'name', component: 'VTextField', props: { placeholder: 'Name' , rules: [rules.required] } },
-  { id: 'description', label: 'Description', model: 'description', component: 'VTextField', props: { placeholder: 'Description' , rules: [rules.required] } },
-  { id: 'total_rounds', label: 'Total Rounds', model: 'total rounds', component: 'VTextField', props: { type: 'number', placeholder: 'Total Rounds' , rules: [rules.required] } },
-  { id: 'amount', label: 'Amount', model: 'amount', component: 'VTextField', props: { placeholder: 'Nominal Arisan' , rules: [rules.required] } },
-  { id: 'start_date', label: 'Start Date', model: 'start_date', component: 'VTextField', props: { type: 'date', placeholder: 'Tanggal Mulai' , rules: [rules.required] } },
-  { id: 'status', label: 'Status', model: 'status', component: 'VSelect', props: { items: ['active', 'finished'], placeholder: 'Pilih Status' , rules: [rules.required] } },
+  {
+    id: 'kode',
+    label: 'Kode',
+    model: 'kode',
+    component: 'VTextField',
+    props: { placeholder: 'Kode', disabled: props.isEdit, rules: [rules.required] },
+  },
+  {
+    id: 'name',
+    label: 'Name',
+    model: 'name',
+    component: 'VTextField',
+    props: { placeholder: 'Name', rules: [rules.required] },
+  },
+  {
+    id: 'description',
+    label: 'Description',
+    model: 'description',
+    component: 'VTextField',
+    props: { placeholder: 'Description', rules: [rules.required] },
+  },
+  {
+    id: 'total_rounds',
+    label: 'Total Rounds',
+    model: 'total_rounds',
+    component: 'VTextField',
+    props: { type: 'number', placeholder: 'Total Rounds', rules: [rules.required] },
+  },
+  {
+    id: 'amount',
+    label: 'Amount',
+    model: 'amount',
+    component: 'VTextField',
+    props: {
+      placeholder: 'amount',
+      rules: [rules.required]
+    },
+  },
+  {
+    id: 'start_date',
+    label: 'Start Date',
+    model: 'start_date',
+    component: 'VTextField',
+    props: { type: 'date', placeholder: 'Tanggal Mulai', rules: [rules.required] },
+  },
+  {
+    id: 'status',
+    label: 'Status',
+    model: 'status',
+    component: 'VSelect',
+    props: { items: ['active', 'finished'], placeholder: 'Pilih Status', rules: [rules.required] },
+  },
 ]
 
 defineExpose({
@@ -118,9 +172,8 @@ defineExpose({
 
   resetValidation() {
     formRef.value?.resetValidation()
-  }
+  },
 })
-
 </script>
 
 <style scoped>
