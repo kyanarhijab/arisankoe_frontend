@@ -53,7 +53,7 @@ const save = async () => {
   const { valid } = await formRef.value.validate()
 
   if (!valid) {
-    console.warn("Invalid form submission")
+    console.warn('Invalid form submission')
     return
   }
 
@@ -65,9 +65,8 @@ const save = async () => {
 
     showModal.value = false
     await store.fetch()
-
   } catch (err) {
-    console.error("Gagal menyimpan:", err)
+    console.error('Gagal menyimpan:', err)
   }
 }
 
@@ -82,11 +81,28 @@ onMounted(() => store.fetch())
 </script>
 
 <template>
-  <VCard>
-    <VCardTitle class="d-flex justify-space-between align-center">
-      <span>Participants</span>
-    </VCardTitle>
-    
-
-  </VCard>
+  <div>
+    <VRow>
+      <VCol cols="12" md="12">
+        <VCard title="Horizontal Form">
+          <VCardText>
+            <VForm>
+              <VRow>
+                <VCol cols="6">
+                  <VRow no-gutters>
+                    <VCol cols="12" md="3">
+                      <label for="firstName">First Name</label>
+                    </VCol>
+                    <VCol cols="12" md="9">
+                      <VTextField id="firstName" v-model="firstName" placeholder="John" persistent-placeholder />
+                    </VCol>
+                  </VRow>
+                </VCol>
+              </VRow>
+            </VForm>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+  </div>
 </template>
