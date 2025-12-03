@@ -86,39 +86,26 @@ onMounted(() => store.fetch())
     <VCardTitle class="d-flex justify-space-between align-center">
       <span>Master User</span>
       <div class="d-flex align-center gap-2">
-        <VTextField
-          v-model="search"
-          placeholder="Search..."
-          prepend-inner-icon="ri-search-2-line"
-          variant="solo-filled"
-          density="compact"
-          hide-details="auto"
-          style="max-width: 220px"
-        />
+        <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line" variant="solo-filled"
+          density="compact" hide-details="auto" style="max-width: 220px" />
         <VBtn color="primary" @click="openAdd">+ Add</VBtn>
       </div>
     </VCardTitle>
 
-    <VDataTable
-      :headers="headers"
-      :items="store.items"
-      :search="search"
-      class="elevation-1"
-      density="comfortable"
-    >
+    <VDataTable :headers="headers" :items="store.items" :search="search" class="elevation-1" density="comfortable">
       <template #item.actions="{ item }">
         <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
         <VBtn size="small" color="error" variant="outlined" @click="del(item.username)">Delete</VBtn>
       </template>
     </VDataTable>
 
-    <BaseModalForm
-      v-model="showModal"
-      :title="isEdit ? 'Edit User' : 'Add User'"
-      @save="save"
-    >
+    <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit User' : 'Add User'" @save="save">
       <!-- ⭐ TARUH REF DISINI -->
       <UserForm v-model="form" :isEdit="isEdit" ref="formRef" />
+       <template #actions>
+    <VBtn variant="outlined" @click="showModal = false">Batal</VBtn>
+    <VBtn color="primary" @click="save">Simpan</VBtn>
+  </template>
     </BaseModalForm>
   </VCard>
 </template>

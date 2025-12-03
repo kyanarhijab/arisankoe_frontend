@@ -1,6 +1,6 @@
 <script setup>
-//import BaseModalForm from '@/components/BaseModalForm.vue'
-//import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsForm.vue'
+import BaseModalForm from '@/components/BaseModalForm.vue'
+import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsForm.vue'
 import { useParticipantsStore } from '@/modules/MasterData/Participants/stores/Participants'
 import { onMounted, ref } from 'vue'
 
@@ -23,22 +23,10 @@ const form = ref({
 const headers = [
   { title: 'Username', key: 'username' },
   { title: 'Name', key: 'name' },
-  { title: 'Password', key: 'password' },
-  { title: 'Email', key: 'email' },
-  { title: 'Role', key: 'role' },
   { title: 'Action', key: 'actions', sortable: false },
 ]
 
-function openAdd() {
-  Object.assign(form.value, {
-    username: '',
-    name: '',
-    password: '',
-    email: '',
-    role: '',
-  })
-
-  isEdit.value = false
+function openShow() {
   showModal.value = true
 }
 
@@ -84,17 +72,33 @@ onMounted(() => store.fetch())
   <div>
     <VRow>
       <VCol cols="12" md="12">
-        <VCard title="Horizontal Form">
+        <VCard title="Participants of Arisan">
+          <VDivider></VDivider>
           <VCardText>
             <VForm>
-              <VRow>
-                <VCol cols="6">
-                  <VRow no-gutters>
-                    <VCol cols="12" md="3">
-                      <label for="firstName">First Name</label>
+              <VRow class="align-center" cols="12" md="12">
+                <VCol cols="12" md="1">
+                  <span class="text-grey-darken-1">Kode Arisan</span>
+                </VCol>
+                <!-- Wrapper input From-To -->
+                <VCol cols="12" md="8">
+                  <VRow align-center gap-3>
+                    <!-- From -->
+                    <VCol cols="2">
+                      <VTextField v-model="kode" id="kode" density="compact" variant="outlined" hide-details
+                        placeholder="Kode Arisan" />
                     </VCol>
-                    <VCol cols="12" md="9">
-                      <VTextField id="firstName" v-model="firstName" placeholder="John" persistent-placeholder />
+                    <!-- Strip "-" -->
+                    <VCol cols="1" class="text-center input-tight" density="compact">
+                      -
+                    </VCol>
+                    <!-- To -->
+                    <VCol cols="4">
+                      <VTextField v-model="name" id="name" density="compact" variant="outlined" hide-details
+                        placeholder="Nama Arisan" disabled="disabled" />
+                    </VCol>
+                    <VCol cols="2" class="mt-0 mt-md-0">
+                      <VBtn color="primary" ide-details @click="openShow">Search</VBtn>
                     </VCol>
                   </VRow>
                 </VCol>
@@ -104,5 +108,28 @@ onMounted(() => store.fetch())
         </VCard>
       </VCol>
     </VRow>
+    <VRow>
+      <VCol cols="12" md="12">
+        <VCard>
+          <VDataTable :headers="headers" :items="store.items" :search="search" class="my-table-header"
+            density="comfortable">
+          </VDataTable>
+        </VCard>
+      </VCol>
+    </VRow>
+
   </div>
+  <BaseModalForm v-model="showModal" :title="'Search Arisan'">
+    <ParticipantsForm v-model="form" ref="formRef" />
+    <template #actions>
+      <VBtn variant="outlined" @click="showModal = false">Tutup</VBtn>
+    </template>
+  </BaseModalForm>
 </template>
+
+<style scoped>
+:deep(.v-table > .v-table__wrapper > table > thead > tr > th) {
+  background-color: #a169ff !important;
+  color: white !important;
+}
+</style>

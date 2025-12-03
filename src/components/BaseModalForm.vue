@@ -1,8 +1,8 @@
 <template>
-  <VDialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" max-width="700px"
-    persistent>
-    <VCard class="pa-2">
-      <!-- 🟦 Header -->
+  <VDialog :model-value="modelValue" 
+           @update:model-value="emit('update:modelValue', $event)" 
+           max-width="700px">
+    <VCard>
       <VCardTitle class="d-flex justify-space-between align-center">
         <span class="text-h6 font-weight-medium">{{ title }}</span>
         <VBtn icon variant="text" @click="emit('update:modelValue', false)">
@@ -10,23 +10,22 @@
         </VBtn>
       </VCardTitle>
 
-      <VDivider></VDivider>
-
-      <!-- 🧩 Isi konten form (slot) -->
       <VCardText>
         <slot />
       </VCardText>
 
-      <VDivider></VDivider>
-
-      <!-- 🟢 Tombol aksi -->
+      <!-- Selalu render actions -->
+      <VDivider />
       <VCardActions class="justify-end">
-        <VBtn variant="outlined" color="grey" @click="emit('update:modelValue', false)">
-          Batal
-        </VBtn>
-        <VBtn color="primary" class="text-white" @click="emit('save')">
-          Simpan
-        </VBtn>
+        <slot name="actions">
+          <!-- fallback -->
+          <VBtn variant="outlined" color="grey" @click="emit('update:modelValue', false)">
+            Batal
+          </VBtn>
+          <VBtn color="primary" class="text-white" @click="emit('save')">
+            Simpan
+          </VBtn>
+        </slot>
       </VCardActions>
     </VCard>
   </VDialog>
