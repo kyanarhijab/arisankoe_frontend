@@ -111,6 +111,20 @@ onMounted(() => store.fetch())
     <VRow>
       <VCol cols="12" md="12">
         <VCard>
+          <VCardTitle class="d-flex justify-space-between align-center">
+      <span></span>
+      <div class="d-flex align-center gap-2">
+        <VTextField
+          v-model="search"
+          placeholder="Search..."
+          prepend-inner-icon="ri-search-2-line"
+          variant="solo-filled"
+          density="compact"
+          hide-details
+          style="max-width: 220px"
+        />
+      </div>
+    </VCardTitle>
           <VDataTable :headers="headers" :items="store.items" :search="search" class="my-table-header"
             density="comfortable">
           </VDataTable>

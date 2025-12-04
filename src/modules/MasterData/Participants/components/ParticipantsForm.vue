@@ -1,98 +1,59 @@
 <template>
   <VForm ref="formRef" class="pa-4" lazy-validation>
-    <VContainer fluid>
-      <VRow
-        v-for="field in fields"
-        :key="field.id"
-        class="align-center mb-2"
-        no-gutters
-      >
-        <VCol cols="12" md="3" class="text-md-right pr-md-4 pb-1 pb-md-0">
-          <label :for="field.id" class="font-weight-medium text-caption text-grey-darken-1">
-            {{ field.label }}
-          </label>
-        </VCol>
+    <!-- 🔍 BARIS SEARCH -->
+    <div class="search-wrapper">
+      <VTextField
+        v-model="search"
+        placeholder="Cari..."
+        density="compact"
+        variant="outlined"
+        hide-details
+        class="search-field"
+      />
+    </div>
 
-        <VCol cols="12" md="9">
-          <VTextField
-            v-if="field.component === 'VTextField'"
-            :id="field.id"
-            v-model="formModel[field.model]"
-            v-bind="field.props"
-            variant="outlined"
-            density="compact"
-            hide-details="auto"
-          />
-
-          <VSelect
-            v-else-if="field.component === 'VSelect'"
-            :id="field.id"
-            v-model="formModel[field.model]"
-            v-bind="field.props"
-            variant="outlined"
-            density="compact"
-            hide-details="auto"
-          />
-        </VCol>
-      </VRow>
-    </VContainer>
+    <!-- TABLE -->
+    <VDataTable
+      :headers="[
+      { title: 'Nama', key: 'name' },
+      { title: 'Email', key: 'email' }
+    ]"
+    :items="store.items"
+    density="compact"
+    />
   </VForm>
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { useUserStore } from '@/modules/MasterData/User/stores/User'
+import { onMounted, ref, watch } from 'vue'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-  isEdit: Boolean,
+const store = useUserStore()
+const search = ref('')
+
+// auto search ketika mengetik
+watch(search, (val) => {
+  store.fetch(val)
 })
 
-const emit = defineEmits(['update:modelValue'])
-
-const formRef = ref(null)
-
-// Clone model
-const formModel = reactive({ ...props.modelValue })
-
-// Sinkronisasi parent → child
-watch(
-  () => props.modelValue,
-  val => Object.assign(formModel, val),
-  { deep: true }
-)
-
-// Sinkronisasi child → parent
-watch(
-  formModel,
-  val => emit('update:modelValue', { ...val }),
-  { deep: true }
-)
-
-const rules = {
-  required: v => !!v || "Wajib diisi",
-}
-
-const fields = [
-  { id: 'id', label: 'Kode', model: 'id', component: 'VTextField', props: { placeholder: 'Kode Anggota', disabled: props.isEdit, rules: [rules.required] }},
-  { id: 'user_id', label: 'user id', model: 'user_id', component: 'VTextField', props: { placeholder: 'user_id', rules: [rules.required] }},
-]
-
-defineExpose({
-  formData: formModel,
-
-  async validate() {
-    if (!formRef.value) return { valid: false }
-    const result = await formRef.value.validate()
-    return { valid: result.valid }
-  },
-
-  resetValidation() {
-    formRef.value?.resetValidation()
-  }
-})
+// load awal
+onMounted(() => store.fetch())
 </script>
 
 <style scoped>
-.text-md-right { text-align: right; }
-.font-weight-medium { font-weight: 500; }
+.search-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px; /* jarak bawah biar rapat */
+}
+
+.search-field {
+  max-width: 220px; /* biar kecil aja */
+}
+
+:deep(.v-table > .v-table__wrapper > table > thead > tr > th) {
+  background-color: #a169ff !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
 </style>
