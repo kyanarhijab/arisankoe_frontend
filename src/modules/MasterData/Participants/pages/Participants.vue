@@ -2,78 +2,38 @@
 import BaseModalForm from '@/components/BaseModalForm.vue'
 import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsForm.vue'
 import { useParticipantsStore } from '@/modules/MasterData/Participants/stores/Participants'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const store = useParticipantsStore()
 
-// ===== REFS =====
 const search = ref('')
 const showModal = ref(false)
-const isEdit = ref(false)
-const formRef = ref(null)
 
-const form = ref({
-  username: '',
-  name: '',
-  password: '',
-  email: '',
-  role: '',
-})
+const kode = ref('')
+const name = ref('')
 
-// ===== TABLE HEADER =====
-const headers = [
-  { title: 'Username', key: 'username' },
-  { title: 'Name', key: 'name' },
-  { title: 'Action', key: 'actions', sortable: false },
-]
-
-// ===== MODAL HANDLER =====
 function openShow() {
   showModal.value = true
 }
 
-function openEdit(item) {
-  Object.assign(form.value, item)
-  isEdit.value = true
-  showModal.value = true
-}
-
-// ===== SAVE DATA =====
-const save = async () => {
-  const { valid } = await formRef.value.validate()
-
-  if (!valid) return
-
-  try {
-    if (isEdit.value) await store.update({ ...form.value })
-    else await store.create({ ...form.value })
-
-    showModal.value = false
-    await store.fetch()
-  } catch (err) {
-    console.error('Gagal menyimpan:', err)
-  }
-}
-
-// ===== DELETE DATA =====
-async function del(kode) {
-  if (!confirm('Are you sure you want to remove this item?')) return
-  await store.remove(kode)
-  await store.fetch()
-}
-
-// ===== FETCH AWAL =====
-onMounted(() => store.fetch())
-
-// ===== PICK RESULT DARI CHILD =====
-const kode = ref('')
-const name = ref('')
-
+// Child memilih row
 function setSelected(item) {
   kode.value = item.kode
   name.value = item.name
   showModal.value = false
 }
+
+// WATCH kode -> auto reload datatable
+watch(kode, async val => {
+  if (!val) {
+    store.items = []
+    return
+  }
+  await store.fetch(val)
+})
+
+// load awal (kosong)
+onMounted(() => store.fetch(''))
 </script>
 
 <template>

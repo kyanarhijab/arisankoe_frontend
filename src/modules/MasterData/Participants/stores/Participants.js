@@ -7,10 +7,12 @@ export const useParticipantsStore = defineStore('participants', {
     items: [],
   }),
   actions: {
-    async fetch() {
-      const res = await axios.get('participants.php')
-      this.items = res.data
-    },
+    async fetch(kode = '') {
+  const res = await axios.get('participants.php', {
+    params: { kode }
+  })
+  this.items = res.data
+},
     async create(data) {
       try {
         await axios.post('participants.php', data)
