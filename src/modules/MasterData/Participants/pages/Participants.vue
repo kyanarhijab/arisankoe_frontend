@@ -12,6 +12,15 @@ const showModal = ref(false)
 const kode = ref('')
 const name = ref('')
 
+const headers = [
+  { title: 'Id', key: 'id', sortable: false },
+  { title: 'Id Peserta', key: 'username', sortable: false },
+  { title: 'Nama Peserta', key: 'nama_peserta', sortable: false },
+  { title: 'Nama Group', key: 'nama_group', sortable: false },
+  { title: 'Tanggal Join', key: 'join_date', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false },
+]
+
 function openShow() {
   showModal.value = true
 }
@@ -21,6 +30,16 @@ function setSelected(item) {
   kode.value = item.kode
   name.value = item.name
   showModal.value = false
+}
+
+function editItem(item) {
+  console.log('edit =>', item)
+  // TODO: buka modal edit / isi form edit
+}
+
+function deleteItem(item) {
+  console.log('delete =>', item)
+  // TODO: panggil API delete
 }
 
 // WATCH kode -> auto reload datatable
@@ -112,10 +131,18 @@ onMounted(() => store.fetch(''))
           </VCardTitle>
 
           <VDataTable
-            :headers="headers"
-            :items="store.items"
-            :search="search"
-          />
+  :headers="headers"
+  :items="store.items"
+  :search="search"
+>
+  <template #item.actions="{ item }">
+    <div class="d-flex gap-2">
+      <VBtn size="x-small" color="error" @click="deleteItem(item)">
+        <VIcon icon="ri-delete-bin-6-line" class="mr-1" /> delete
+      </VBtn>
+    </div>
+  </template>
+</VDataTable>
         </VCard>
       </VCol>
     </VRow>

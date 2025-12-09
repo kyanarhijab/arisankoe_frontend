@@ -28,13 +28,8 @@
   <!-- SLOT ACTION -->
   <template #item.actions="{ item }">
     <div class="action-wrapper">
-      <VBtn
-        size="x-small"
-        color="secondary"
-        class="rounded-pill px-4"
-        @click="pilihRow(item)"
-      >
-        choose 
+       <VBtn size="x-small" color="primary" @click="pilihRow(item)">
+        <VIcon icon="ri-add-line" class="mr-1" /> choose
       </VBtn>
     </div>
   </template>
