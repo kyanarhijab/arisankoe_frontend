@@ -1,8 +1,8 @@
 <script setup>
 import BaseModalForm from '@/components/BaseModalForm.vue'
-import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsSearch.vue'
 import { useParticipantsStore } from '@/modules/MasterData/Participants/stores/Participants'
 import { onMounted, ref, watch } from 'vue'
+import GroupArisanSearch from '../../GroupArisan/components/GroupArisanSearch.vue'
 
 const store = useParticipantsStore()
 
@@ -136,7 +136,7 @@ onMounted(() => store.fetch(''))
 
   <!-- MODAL -->
   <BaseModalForm v-model="showModalSearch" title="Search Arisan">
-    <ParticipantsForm ref="formRef" @choose="setSelected" />
+    <GroupArisanSearch ref="formRef" @choose="setSelected" />
 
     <template #actions>
       <VBtn variant="outlined" @click="showModalSearch = false">
