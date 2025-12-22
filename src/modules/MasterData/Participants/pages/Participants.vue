@@ -1,10 +1,13 @@
 <script setup>
 import BaseModalForm from '@/components/BaseModalForm.vue'
-import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsSearch.vue'
+import GroupArisanSearch from '@/modules/MasterData/GroupArisan/components/GroupArisanSearch.vue'
+import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsForm.vue'
 import { useParticipantsStore } from '@/modules/MasterData/Participants/stores/Participants'
+import { useNotifyStore } from '@/stores/notify'
 import { onMounted, ref, watch } from 'vue'
 
 const store = useParticipantsStore()
+const notify = useNotifyStore()
 
 const search = ref('')
 const showModalSearch = ref(false)
@@ -44,6 +47,14 @@ function deleteItem(item) {
 }
 
 function openshowModalAdd() {
+
+  if (!kode.value) {
+    notify.notify(
+      'Silakan pilih Kode Arisan terlebih dahulu',
+      'warning'
+    )
+    return
+  }
   showModalAdd.value = true
 }
 
@@ -136,7 +147,7 @@ onMounted(() => store.fetch(''))
 
   <!-- MODAL -->
   <BaseModalForm v-model="showModalSearch" title="Search Arisan">
-    <ParticipantsForm ref="formRef" @choose="setSelected" />
+    <GroupArisanSearch ref="formRef" @choose="setSelected" />
 
     <template #actions>
       <VBtn variant="outlined" @click="showModalSearch = false">
@@ -146,7 +157,7 @@ onMounted(() => store.fetch(''))
   </BaseModalForm>
 
   <BaseModalForm v-model="showModalAdd" title="Add Participant">
-    <ParticipantsInputForm @saved="reload" />
+    <ParticipantsForm @saved="reload" />
   </BaseModalForm>
 
 
