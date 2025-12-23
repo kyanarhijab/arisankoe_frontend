@@ -1,21 +1,32 @@
 <template>
   <VForm ref="formRef" class="pa-4" lazy-validation>
     <VContainer fluid>
-      <VRow v-for="field in fields" :key="field.id" class="align-center mb-2" no-gutters>
+      <VRow
+        v-for="field in fields"
+        :key="field.id"
+        class="align-center mb-2"
+        no-gutters
+      >
         <!-- Label kiri -->
         <VCol cols="12" md="3" class="text-md-right pr-md-4 pb-1 pb-md-0">
-          <label :for="field.id" class="font-weight-medium text-caption text-grey-darken-1">
+          <label
+            :for="field.id"
+            class="font-weight-medium text-caption text-grey-darken-1"
+          >
             {{ field.label }}
           </label>
         </VCol>
 
         <!-- Input kanan -->
         <VCol cols="12" md="9">
-           <VSelect
+          <VSelect
             v-if="field.component === 'VSelect'"
             :id="field.id"
             v-model="formModel[field.model]"
             v-bind="field.props"
+            :multiple="field.multiple"
+            :chips="field.multiple"
+            closable-chips
             variant="outlined"
             density="compact"
             hide-details
@@ -39,8 +50,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const formRef = ref(null)
 
-// Clone model
-const formModel = reactive({ ...props.modelValue })
+const formModel = reactive({
+  barang_ids: [] // ⚠️ WAJIB array
+})
 
 // Sinkronisasi parent → child
 watch(
@@ -58,14 +70,20 @@ const rules = {
 
 
 
-// Daftar field
 const fields = [
   {
-    id: 'status',
-    label: 'Status',
-    model: 'status',
+    id: 'barang',
+    label: 'Barang',
     component: 'VSelect',
-    props: { items: ['active', 'finished'], placeholder: 'Pilih Status', rules: [rules.required] },
+    model: 'barang_ids',
+    multiple: true,
+    props: {
+      items: masterBarang,       // hasil fetch API
+      itemTitle: 'nama',
+      itemValue: 'id',
+      placeholder: 'Pilih Barang',
+      clearable: true
+    }
   }
 ]
 
