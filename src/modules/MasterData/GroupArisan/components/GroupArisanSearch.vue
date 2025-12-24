@@ -1,5 +1,9 @@
 <template>
-  <VForm ref="formRef" class="pa-4" lazy-validation>
+  <VForm
+    ref="formRef"
+    class="pa-4"
+    lazy-validation
+  >
     <!-- 🔍 Baris Search -->
     <div class="search-wrapper">
       <VTextField
@@ -15,26 +19,33 @@
 
     <!-- TABLE -->
     <VDataTable
-  :headers="[
-    { title: 'Kode', key: 'kode' },
-    { title: 'Name', key: 'name' },
-    { title: 'Description', key: 'description' },
-    { title: 'Action', key: 'actions', sortable: false }
-  ]"
-  :items="store.items"
-  :search="search"
-  density="compact"
->
-  <!-- SLOT ACTION -->
-  <template #item.actions="{ item }">
-    <div class="action-wrapper">
-       <VBtn size="x-small" color="primary" @click="pilihRow(item)">
-        <VIcon icon="ri-add-line" class="mr-1" /> choose
-      </VBtn>
-    </div>
-  </template>
-</VDataTable>
-
+      :headers="[
+        { title: 'Kode', key: 'kode' },
+        { title: 'Name', key: 'name' },
+        { title: 'Description', key: 'description' },
+        { title: 'Action', key: 'actions', sortable: false },
+      ]"
+      :items="store.items"
+      :search="search"
+      density="compact"
+    >
+      <!-- SLOT ACTION -->
+      <template #item.actions="{ item }">
+        <div class="action-wrapper">
+          <VBtn
+            size="x-small"
+            color="primary"
+            @click="pilihRow(item)"
+          >
+            <VIcon
+              icon="ri-add-line"
+              class="mr-1"
+            />
+            choose
+          </VBtn>
+        </div>
+      </template>
+    </VDataTable>
   </VForm>
 </template>
 
@@ -56,7 +67,7 @@ watch(search, val => {
 onMounted(() => store.fetch())
 
 function pilihRow(item) {
-  emit('Choose', item)   // kirim data ke parent
+  emit('Choose', item) // kirim data ke parent
 }
 </script>
 

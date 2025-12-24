@@ -1,66 +1,28 @@
 <template>
-  <VForm
-    ref="formRef"
-    class="pa-4"
-    lazy-validation
-  >
+  <VForm ref="formRef" class="pa-4" lazy-validation>
     <VContainer fluid>
-      <VRow
-        v-for="field in fields"
-        :key="field.id"
-        class="align-center mb-2"
-        no-gutters
-      >
+      <VRow v-for="field in fields" :key="field.id" class="align-center mb-2" no-gutters>
         <!-- Label kiri -->
-        <VCol
-          cols="12"
-          md="3"
-          class="text-md-right pr-md-4 pb-1 pb-md-0"
-        >
-          <label
-            :for="field.id"
-            class="font-weight-medium text-caption text-grey-darken-1"
-          >
+        <VCol cols="12" md="3" class="text-md-right pr-md-4 pb-1 pb-md-0">
+          <label :for="field.id" class="font-weight-medium text-caption text-grey-darken-1">
             {{ field.label }}
           </label>
         </VCol>
 
         <!-- Input kanan -->
-        <VCol
-          cols="12"
-          md="9"
-        >
+        <VCol cols="12" md="9">
 
           <!-- Input Amount (hanya satu!) -->
-<VTextField
-  v-if="field.model === 'amount'"
-  v-model="amountFormatted"
-  variant="outlined"
-  density="compact"
-  hide-details="auto"
-  v-bind="field.props"
-/>
+          <VTextField v-if="field.model === 'amount'" v-model="amountFormatted" variant="outlined" density="compact"
+            hide-details="auto" v-bind="field.props" />
 
-<!-- Input TextField umum (kecuali amount) -->
-<VTextField
-  v-else-if="field.component === 'VTextField'"
-  v-model="formModel[field.model]"
-  variant="outlined"
-  density="compact"
-  hide-details="auto"
-  v-bind="field.props"
-/>
+          <!-- Input TextField umum (kecuali amount) -->
+          <VTextField v-else-if="field.component === 'VTextField'" v-model="formModel[field.model]" variant="outlined"
+            density="compact" hide-details="auto" v-bind="field.props" />
 
           <!-- Select -->
-          <VSelect
-            v-else-if="field.component === 'VSelect'"
-            :id="field.id"
-            v-model="formModel[field.model]"
-            v-bind="field.props"
-            variant="outlined"
-            density="compact"
-            hide-details
-          />
+          <VSelect v-else-if="field.component === 'VSelect'" :id="field.id" v-model="formModel[field.model]"
+            v-bind="field.props" variant="outlined" density="compact" hide-details />
         </VCol>
       </VRow>
     </VContainer>
@@ -180,6 +142,7 @@ defineExpose({
 .text-md-right {
   text-align: right;
 }
+
 .font-weight-medium {
   font-weight: 500;
 }
