@@ -1,49 +1,69 @@
-import axios from '@/services/api'
+import api from '@/services/api'
 import { useNotifyStore } from '@/stores/notify'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     items: [],
+    loading: false,
   }),
+
   actions: {
+    // =====================
+    // GET USERS
+    // =====================
     async fetch() {
-      const res = await axios.get('user.php')
-      this.items = res.data
-    },
-    async create(data) {
       try {
-        await axios.post('user.php', data)
-        useNotifyStore().notify('Action completed successfully ✅','success')
-        this.fetch()
+        this.loading = true
+        const res = await api.get('/users')
+        this.items = res.data.data
       } catch (err) {
-        useNotifyStore().notify('Gagal menambahkan user', 'error')
+        useNotifyStore().notify('Gagal memuat user', 'error')
+      } finally {
+        this.loading = false
       }
     },
-    async update(data) {
 
-
+    // =====================
+    // CREATE USER
+    // =====================
+    async create(payload) {
       try {
-        await axios.put(`user.php?user=${data.username}`, data)
-        useNotifyStore().notify('Action completed successfully ✅','success')
+        await api.post('/users', payload)
+        useNotifyStore().notify('User berhasil ditambahkan ✅', 'success')
+        this.fetch()
+      } catch (err) {
+        useNotifyStore().notify(
+          err.response?.data?.message || 'Gagal menambahkan user',
+          'error'
+        )
+      }
+    },
+
+    // =====================
+    // UPDATE USER
+    // =====================
+    async update(id, payload) {
+      try {
+        await api.put(`/users/${id}`, payload)
+        useNotifyStore().notify('User berhasil diupdate ✅', 'success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal update user', 'error')
       }
-
-     
     },
-    async remove(username) {
 
+    // =====================
+    // DELETE USER
+    // =====================
+    async remove(id) {
       try {
-        await axios.delete(`user.php?user=${username}`)
-        useNotifyStore().notify('Action completed successfully ✅','success')
+        await api.delete(`/users/${id}`)
+        useNotifyStore().notify('User berhasil dihapus ✅', 'success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal hapus user', 'error')
       }
-
-     
     },
   },
 })

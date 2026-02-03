@@ -31,7 +31,7 @@
 
 <script setup>
 import { formatRupiah } from '@/utils/formatRupiah'
-import { reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
@@ -42,101 +42,98 @@ const emit = defineEmits(['update:modelValue'])
 
 const formRef = ref(null)
 
-// Clone model
 const formModel = reactive({ ...props.modelValue })
 
-// Sinkronisasi parent → child
 watch(
   () => props.modelValue,
   val => Object.assign(formModel, val),
-  { deep: true },
+  { deep: true }
 )
 
-// Sinkronisasi child → parent
-watch(formModel, val => emit('update:modelValue', { ...val }), { deep: true })
+watch(
+  formModel,
+  val => emit('update:modelValue', { ...val }),
+  { deep: true }
+)
 
 const rules = {
   required: v => !!v || 'Wajib diisi',
 }
 
-// 💰 Format amount jadi rupiah
 const amountFormatted = computed({
   get: () => formatRupiah(formModel.amount),
   set: val => {
-    formModel.amount = val.replace(/\D/g, '') // ambil angka saja
+    formModel.amount = Number(val.replace(/\D/g, ''))
   },
 })
 
-// Daftar field
 const fields = [
   {
     id: 'kode',
     label: 'Kode',
     model: 'kode',
     component: 'VTextField',
-    props: { placeholder: 'Kode', disabled: props.isEdit, rules: [rules.required] },
+    props: {
+      placeholder: 'Kode',
+      disabled: props.isEdit,
+      rules: props.isEdit ? [] : [rules.required],
+    },
   },
   {
     id: 'name',
     label: 'Name',
     model: 'name',
     component: 'VTextField',
-    props: { placeholder: 'Name', rules: [rules.required] },
+    props: { rules: [rules.required] },
   },
   {
     id: 'description',
     label: 'Description',
     model: 'description',
     component: 'VTextField',
-    props: { placeholder: 'Description', rules: [rules.required] },
+    props: { rules: [rules.required] },
   },
   {
     id: 'total_rounds',
     label: 'Total Rounds',
     model: 'total_rounds',
     component: 'VTextField',
-    props: { type: 'number', placeholder: 'Total Rounds', rules: [rules.required] },
+    props: { type: 'number', rules: [rules.required] },
   },
   {
     id: 'amount',
     label: 'Amount',
     model: 'amount',
     component: 'VTextField',
-    props: {
-      placeholder: 'amount',
-      rules: [rules.required]
-    },
+    props: { rules: [rules.required] },
   },
   {
     id: 'start_date',
     label: 'Start Date',
     model: 'start_date',
     component: 'VTextField',
-    props: { type: 'date', placeholder: 'Tanggal Mulai', rules: [rules.required] },
+    props: { type: 'date', rules: [rules.required] },
   },
   {
     id: 'status',
     label: 'Status',
     model: 'status',
     component: 'VSelect',
-    props: { items: ['active', 'finished'], placeholder: 'Pilih Status', rules: [rules.required] },
+    props: {
+      items: ['active', 'finished'],
+      rules: [rules.required],
+    },
   },
 ]
 
 defineExpose({
-  formData: formModel,
-
   async validate() {
-    if (!formRef.value) return { valid: false }
     const result = await formRef.value.validate()
     return { valid: result.valid }
   },
-
-  resetValidation() {
-    formRef.value?.resetValidation()
-  },
 })
 </script>
+
 
 <style scoped>
 .text-md-right {

@@ -11,10 +11,31 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
   },
   actions: {
+    async init() {
+    if (this.initialized) return
+
+    const token = localStorage.getItem('token')
+    if (token) {
+      this.token = token
+
+      try {
+        const res = await axios.get('/api/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        this.user = res.data
+      } catch (e) {
+        this.logout()
+      }
+    }
+
+    this.initialized = true
+  },
     async login(username, password) {
       try {
         const res = await axios.post(
-          'http://localhost/arisankoe-backend/auth/Login.php',
+          'http://localhost/arisankoe-backend/public/api/login',
           { username, password }
         )
 

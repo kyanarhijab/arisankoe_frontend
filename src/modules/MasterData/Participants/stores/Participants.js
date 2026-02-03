@@ -1,43 +1,70 @@
-import axios from '@/services/api'
+import api from '@/services/api'
 import { useNotifyStore } from '@/stores/notify'
 import { defineStore } from 'pinia'
 
 export const useParticipantsStore = defineStore('participants', {
   state: () => ({
     items: [],
+    loading: false,
   }),
+
   actions: {
-    async fetch(kode = '') {
-      const res = await axios.get('participants.php', {
-        params: { kode: kode },
-      })
-      this.items = res.data
-    },
-    async create(data) {
+    // =====================
+    // GET PARTICIPANTS BY GROUP
+    // =====================
+    async fetch(group_id) {
       try {
-        await axios.post('participants.php', data)
-        useNotifyStore().notify('Action completed successfully ✅', 'success')
-        this.fetch()
+        this.loading = true
+        const res = await api.get('/participants', {
+          params: { group_id },
+        })
+        this.items = res.data.data
       } catch (err) {
-        useNotifyStore().notify('Gagal menambahkan participants', 'error')
+        useNotifyStore().notify('Gagal memuat participants', 'error')
+      } finally {
+        this.loading = false
       }
     },
-    async update(data) {
+
+    // =====================
+    // CREATE PARTICIPANT
+    // =====================
+    async create(payload) {
       try {
-        await axios.put(`participants.php?id=${data.id}`, data)
-        useNotifyStore().notify('Action completed successfully ✅', 'success')
-        this.fetch()
+        await api.post('/participants', payload)
+        useNotifyStore().notify('Participant berhasil ditambahkan ✅', 'success')
       } catch (err) {
-        useNotifyStore().notify('Gagal update participants', 'error')
+        useNotifyStore().notify(
+          err.response?.data?.message || 'Gagal menambahkan participant',
+          'error'
+        )
+        throw err
       }
     },
+
+    // =====================
+    // UPDATE PARTICIPANT (status)
+    // =====================
+    async update(id, payload) {
+      try {
+        await api.put(`/participants/${id}`, payload)
+        useNotifyStore().notify('Participant berhasil diupdate ✅', 'success')
+      } catch (err) {
+        useNotifyStore().notify('Gagal update participant', 'error')
+        throw err
+      }
+    },
+
+    // =====================
+    // DELETE PARTICIPANT
+    // =====================
     async remove(id) {
       try {
-        await axios.delete(`participants.php?id=${id}`)
-        useNotifyStore().notify('Action completed successfully ✅', 'success')
-        this.fetch()
+        await api.delete(`/participants/${id}`)
+        useNotifyStore().notify('Participant berhasil dihapus ✅', 'success')
       } catch (err) {
-        useNotifyStore().notify('Gagal hapus participants', 'error')
+        useNotifyStore().notify('Gagal hapus participant', 'error')
+        throw err
       }
     },
   },

@@ -3,7 +3,7 @@ import BaseModalForm from '@/components/BaseModalForm.vue'
 import GroupArisanForm from '@/modules/MasterData/GroupArisan/components/GroupArisanForm.vue'
 import { useGroupArisanStore } from '@/modules/MasterData/GroupArisan/stores/GroupArisan'
 import { formatRupiah } from '@/utils/formatRupiah'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 
 const store = useGroupArisanStore()
 const search = ref('')
@@ -44,38 +44,57 @@ function openAdd() {
     start_date: '',
     status: '',
   })
+
   isEdit.value = false
   showModal.value = true
+
+  nextTick(() => {
+    formRef.value?.resetValidation?.()
+  })
 }
 
 function openEdit(item) {
-  form.value = { ...item }
+  Object.assign(form.value, item)
   isEdit.value = true
   showModal.value = true
+
+  nextTick(() => {
+    formRef.value?.resetValidation?.()
+  })
 }
 
 const save = async () => {
-  // ⭐ VALIDASI LANGSUNG dari UserForm
+  if (!formRef.value) {
+    console.error('❌ formRef belum siap')
+    return
+  }
+
   const { valid } = await formRef.value.validate()
 
   if (!valid) {
-    console.warn("Invalid form submission")
+    console.warn('⚠️ Invalid form submission')
     return
   }
 
   const data = { ...form.value }
 
+  console.log('📦 PAYLOAD:', data)
+
   try {
-    if (isEdit.value) await store.update(data)
-    else await store.create(data)
+    if (isEdit.value) {
+      await store.update(data)
+    } else {
+      await store.create(data)
+    }
 
     showModal.value = false
     await store.fetch()
 
   } catch (err) {
-    console.error("Gagal menyimpan:", err)
+    console.error('❌ Gagal menyimpan:', err)
   }
 }
+
 
 async function del(kode) {
   if (confirm('Are you sure you want to remove this item?')) {
@@ -92,60 +111,26 @@ onMounted(() => store.fetch())
     <VCardTitle class="d-flex justify-space-between align-center">
       <span>Master Group Arisan</span>
       <div class="d-flex align-center gap-2">
-        <VTextField
-          v-model="search"
-          placeholder="Search..."
-          prepend-inner-icon="ri-search-2-line"
-          variant="solo-filled"
-          density="compact"
-          hide-details
-          style="max-width: 220px"
-        />
-        <VBtn
-          color="primary"
-          @click="openAdd"
-          >+ Add</VBtn
-        >
+        <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line" variant="solo-filled"
+          density="compact" hide-details style="max-width: 220px" />
+        <VBtn color="primary" @click="openAdd">+ Add</VBtn>
       </div>
     </VCardTitle>
 
-    <VDataTable
-      :headers="headers"
-      :items="store.items"
-      :search="search"
-      class="elevation-1"
-      density="comfortable"
-    >
+    <VDataTable :headers="headers" :items="store.items" :search="search" class="elevation-1" density="comfortable">
       <template #item.amount="{ item }">
         {{ formatRupiah(item.amount) }}
       </template>
 
       <template #item.actions="{ item }">
-        <VBtn
-          size="small"
-          color="primary"
-          variant="outlined"
-          class="me-2"
-          @click="openEdit(item)"
-          >Edit</VBtn
-        >
-        <VBtn
-          size="small"
-          color="error"
-          variant="outlined"
-          @click="del(item.kode)"
-          >Delete</VBtn
-        >
+        <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
+        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Delete</VBtn>
       </template>
     </VDataTable>
 
-    <BaseModalForm
-      v-model="showModal"
-      :title="isEdit ? 'Edit Group' : 'Add Group'"
-      @save="save"
-    >
+    <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit Group' : 'Add Group'" @save="save">
       <!-- ⭐ TARUH REF DISINI -->
-      <GroupArisanForm v-model="form" :isEdit="isEdit" ref="formRef" />
+      <GroupArisanForm :key="isEdit ? 'edit' : 'add'" v-model="form" :isEdit="isEdit" ref="formRef" />
     </BaseModalForm>
   </VCard>
 </template>

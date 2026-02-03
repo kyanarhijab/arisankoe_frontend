@@ -71,9 +71,9 @@ const save = async () => {
   }
 }
 
-async function del(kode) {
+async function del(id) {
   if (confirm('Are you sure you want to remove this item?')) {
-    await store.remove(kode)
+    await store.remove(id)
     await store.fetch()
   }
 }
@@ -95,7 +95,7 @@ onMounted(() => store.fetch())
     <VDataTable :headers="headers" :items="store.items" :search="search" class="elevation-1" density="comfortable">
       <template #item.actions="{ item }">
         <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
-        <VBtn size="small" color="error" variant="outlined" @click="del(item.username)">Delete</VBtn>
+        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Delete</VBtn>
       </template>
     </VDataTable>
 

@@ -53,7 +53,7 @@ const masterUser = ref([])
 
 const fetchMasterUser = async () => {
   try {
-    const res = await axios.get('user.php')
+    const res = await axios.get('/users')
 
     // JIKA API: { data: [...] }
     masterUser.value = Array.isArray(res.data)
@@ -98,7 +98,7 @@ const fields = [
 
     props: {
       itemTitle: 'username',
-      itemValue: 'username',
+      itemValue: 'id',
       placeholder: 'Pilih User',
       clearable: true
     }

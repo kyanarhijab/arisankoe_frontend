@@ -78,7 +78,7 @@ const fields = [
   { id: 'password', label: 'Password', model: 'password', component: 'VTextField', props: { placeholder: 'Password', rules: [rules.required] }},
   { id: 'name', label: 'Name', model: 'name', component: 'VTextField', props: { placeholder: 'Name', rules: [rules.required] }},
   { id: 'email', label: 'Email', model: 'email', component: 'VTextField', props: { type: 'email', placeholder: 'Email', rules: [rules.required, rules.email] }},
-  { id: 'role', label: 'Role', model: 'role', component: 'VSelect', props: { items: ['admin', 'anggota'], placeholder: 'Choose Role', rules: [rules.required] }},
+  { id: 'role', label: 'Role', model: 'role', component: 'VSelect', props: { items: ['admin', 'peserta'], placeholder: 'Choose Role', rules: [rules.required] }},
 ]
 
 defineExpose({

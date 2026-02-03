@@ -1,4 +1,3 @@
-// src/stores/groupArisan.js
 import api from '@/services/api'
 import { useNotifyStore } from '@/stores/notify'
 import { defineStore } from 'pinia'
@@ -7,57 +6,65 @@ export const useGroupArisanStore = defineStore('groupArisan', {
   state: () => ({
     items: [],
     loading: false,
-    error: null,
   }),
 
   actions: {
+    // =====================
+    // GET USERS
+    // =====================
     async fetch() {
-      this.loading = true
-      this.error = null
       try {
-        const res = await api.get('group_arisan.php')
-        this.items = res.data
+        this.loading = true
+        const res = await api.get('/groups')
+        this.items = res.data.data
       } catch (err) {
-        this.error = err.response?.data?.error || err.message
-        console.error('Fetch error:', this.error)
+        useNotifyStore().notify('Gagal memuat user', 'error')
       } finally {
         this.loading = false
       }
     },
 
-    async create(data) {
+    // =====================
+    // CREATE USER
+    // =====================
+    async create(payload) {
       try {
-        await api.post('group_arisan.php', data)
-        useNotifyStore().notify('Action completed successfully ✅','success')
-        await this.fetch()
+        await api.post('/groups', payload)
+        useNotifyStore().notify('Group Arisan berhasil ditambahkan ✅', 'success')
+        this.fetch()
       } catch (err) {
-        useNotifyStore().notify('Something went wrong !!!', 'error')
-        console.error('Create error:', err.response?.data || err.message)
-        throw err
+        useNotifyStore().notify(
+          err.response?.data?.message || 'Gagal menambahkan Group Arisan',
+          'error'
+        )
       }
     },
 
-    async update(data) {
+    // =====================
+    // UPDATE USER
+    // =====================
+    async update(payload) {
       try {
-        await api.put(`group_arisan.php?kode=${data.kode}`, data)
-        useNotifyStore().notify('Action completed successfully ✅','success')
-        await this.fetch()
+        await api.put(`/groups/${payload.id}`, payload)
+        useNotifyStore().notify('Group Arisan berhasil diupdate ✅', 'success')
+        this.fetch()
       } catch (err) {
-        useNotifyStore().notify('Something went wrong !!!', 'error')
-        console.error('Update error:', err.response?.data || err.message)
-        throw err
+        useNotifyStore().notify('Gagal update Group Arisan', 'error')
       }
     },
 
+    
+
+    // =====================
+    // DELETE USER
+    // =====================
     async remove(id) {
       try {
-        await api.delete(`group_arisan.php?kode=${id}`)
-        useNotifyStore().notify('Action completed successfully ✅','success')
-        await this.fetch()
+        await api.delete(`/groups/${id}`)
+        useNotifyStore().notify('Group Arisan berhasil dihapus ✅', 'success')
+        this.fetch()
       } catch (err) {
-        useNotifyStore().notify('Something went wrong !!!', 'error')
-        console.error('Delete error:', err.response?.data || err.message)
-        throw err
+        useNotifyStore().notify('Gagal hapus Group Arisan', 'error')
       }
     },
   },

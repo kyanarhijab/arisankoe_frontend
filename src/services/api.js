@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost/arisankoe-backend/', // ganti sesuai backend kamu
+  baseURL: 'http://localhost/arisankoe-backend/public/api', // ganti sesuai backend kamu
   headers: {
     'Content-Type': 'application/json',
   },

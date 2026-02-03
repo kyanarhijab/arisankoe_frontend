@@ -11,19 +11,26 @@ const notify = useNotifyStore()
 
 const search = ref('')
 const showModalSearch = ref(false)
-const showModalAdd    = ref(false)
+const showModalAdd = ref(false)
+const formRef = ref(null)
 
-const kode = ref('')
-const name = ref('')
+const groupkode = ref('')
+const participantkode = ref('')
+const groupname = ref('')
 
 const headers = [
   { title: 'Id', key: 'id', sortable: false },
-  { title: 'Id Peserta', key: 'username', sortable: false },
-  { title: 'Nama Peserta', key: 'nama_peserta', sortable: false },
-  { title: 'Nama Group', key: 'nama_group', sortable: false },
+  { title: 'Id Peserta', key: 'user_id', sortable: false },
+  { title: 'Nama Peserta', key: 'user_name', sortable: false },
+  { title: 'Nama Group', key: 'group_name', sortable: false },
   { title: 'Tanggal Join', key: 'join_date', sortable: false },
   { title: 'Actions', key: 'actions', sortable: false },
 ]
+
+const form = ref({
+  username: [],
+  group_id: '',
+})
 
 function openshowModalSearch() {
   showModalSearch.value = true
@@ -31,24 +38,27 @@ function openshowModalSearch() {
 
 // Child memilih row
 function setSelected(item) {
-  kode.value = item.kode
-  name.value = item.name
+  groupkode.value = item.kode
+  groupname.value = item.name
   showModalSearch.value = false
 }
 
-function editItem(item) {
-  console.log('edit =>', item)
-  // TODO: buka modal edit / isi form edit
+
+const deleteItem = async (item) => {
+  participantkode.value = item.id
+  console.log('delete =>', item)
+
+  if (confirm('Are you sure you want to remove this item?')) {
+    await store.remove(participantkode.value)
+    await store.fetch()
+  }
 }
 
-function deleteItem(item) {
-  console.log('delete =>', item)
-  // TODO: panggil API delete
-}
+
 
 function openshowModalAdd() {
 
-  if (!kode.value) {
+  if (!groupkode.value) {
     notify.notify(
       'Silakan pilih Kode Arisan terlebih dahulu',
       'warning'
@@ -59,7 +69,7 @@ function openshowModalAdd() {
 }
 
 // WATCH kode -> auto reload datatable
-watch(kode, async val => {
+watch(groupkode, async val => {
   if (!val) {
     store.items = []
     return
@@ -69,6 +79,27 @@ watch(kode, async val => {
 
 // load awal (kosong)
 onMounted(() => store.fetch(''))
+
+const save = async () => {
+  if (!formRef.value) return
+
+  const { valid } = await formRef.value.validate()
+  if (!valid) return
+
+  try {
+    await store.create({
+      group_id: groupkode.value,
+      users: form.value.username,
+    })
+
+    showModalAdd.value = false
+    await store.fetch(groupkode.value)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+
 </script>
 
 <template>
@@ -91,7 +122,7 @@ onMounted(() => store.fetch(''))
                   <VRow align="center">
 
                     <VCol cols="2">
-                      <VTextField v-model="kode" placeholder="Kode Arisan" density="compact" variant="outlined"
+                      <VTextField v-model="groupkode" placeholder="Kode Arisan" density="compact" variant="outlined"
                         hide-details />
                     </VCol>
 
@@ -100,7 +131,7 @@ onMounted(() => store.fetch(''))
                     </VCol>
 
                     <VCol cols="4">
-                      <VTextField v-model="name" placeholder="Nama Arisan" density="compact" variant="outlined"
+                      <VTextField v-model="groupname" placeholder="Nama Arisan" density="compact" variant="outlined"
                         hide-details disabled />
                     </VCol>
 
@@ -148,7 +179,6 @@ onMounted(() => store.fetch(''))
   <!-- MODAL -->
   <BaseModalForm v-model="showModalSearch" title="Search Arisan">
     <GroupArisanSearch ref="formRef" @choose="setSelected" />
-
     <template #actions>
       <VBtn variant="outlined" @click="showModalSearch = false">
         Tutup
@@ -156,8 +186,8 @@ onMounted(() => store.fetch(''))
     </template>
   </BaseModalForm>
 
-  <BaseModalForm v-model="showModalAdd" title="Add Participant">
-    <ParticipantsForm @saved="reload" />
+  <BaseModalForm v-model="showModalAdd" title="Add Participant" @save="save">
+    <ParticipantsForm v-model="form" ref="formRef" />
   </BaseModalForm>
 
 

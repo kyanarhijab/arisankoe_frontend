@@ -7,15 +7,24 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore()
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    next('/login')
-  } else {
-    next()
+  if (!auth.initialized) {
+    await auth.init()
   }
+
+  if (to.meta.requiresAuth && !auth.user) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    })
+    return
+  }
+
+  next()
 })
+
 
 // 🔥 Update title setiap route berubah
 router.afterEach((to) => {
