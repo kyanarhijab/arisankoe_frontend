@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import groupArisanRoutes from '@/modules/MasterData/GroupArisan/index.js'
 import ParticipantsRoutes from '@/modules/MasterData/Participants/index.js'
 import userRoutes from '@/modules/MasterData/User/index.js'
+import PutaranArisanRoutes from '@/modules/Transaksi/PutaranArisan/index.js'
 export const routes = [
   { path: '/', redirect: '/login' },
   {
@@ -17,6 +18,7 @@ export const routes = [
       ...groupArisanRoutes,
       ...userRoutes,
       ...ParticipantsRoutes,
+       ...PutaranArisanRoutes,
       {
         path: 'account-settings',
         component: () => import('@/pages/account-settings.vue'),

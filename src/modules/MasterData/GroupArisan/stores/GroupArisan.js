@@ -18,7 +18,7 @@ export const useGroupArisanStore = defineStore('groupArisan', {
         const res = await api.get('/groups')
         this.items = res.data.data
       } catch (err) {
-        useNotifyStore().notify('Gagal memuat user', 'error')
+        useNotifyStore().notify('Terjadi kesalahan saat memuat data pengguna.', 'error')
       } finally {
         this.loading = false
       }
@@ -30,7 +30,7 @@ export const useGroupArisanStore = defineStore('groupArisan', {
     async create(payload) {
       try {
         await api.post('/groups', payload)
-        useNotifyStore().notify('Group Arisan berhasil ditambahkan ✅', 'success')
+        useNotifyStore().notify('Data grup arisan telah berhasil ditambahkan.', 'success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify(
@@ -46,7 +46,7 @@ export const useGroupArisanStore = defineStore('groupArisan', {
     async update(payload) {
       try {
         await api.put(`/groups/${payload.id}`, payload)
-        useNotifyStore().notify('Group Arisan berhasil diupdate ✅', 'success')
+        useNotifyStore().notify('Data grup arisan telah berhasil diupdate.', 'success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal update Group Arisan', 'error')
@@ -61,7 +61,7 @@ export const useGroupArisanStore = defineStore('groupArisan', {
     async remove(id) {
       try {
         await api.delete(`/groups/${id}`)
-        useNotifyStore().notify('Group Arisan berhasil dihapus ✅', 'success')
+        useNotifyStore().notify('Data grup arisan telah berhasil dihapus.', 'success')
         this.fetch()
       } catch (err) {
         useNotifyStore().notify('Gagal hapus Group Arisan', 'error')

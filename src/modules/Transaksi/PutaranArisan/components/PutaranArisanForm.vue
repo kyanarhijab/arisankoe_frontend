@@ -1,104 +1,11 @@
 <script setup>
-import BaseModalForm from '@/components/BaseModalForm.vue'
-import GroupArisanSearch from '@/modules/MasterData/GroupArisan/components/GroupArisanSearch.vue'
-import ParticipantsForm from '@/modules/MasterData/Participants/components/ParticipantsForm.vue'
-import { useParticipantsStore } from '@/modules/MasterData/Participants/stores/Participants'
-import { useNotifyStore } from '@/stores/notify'
-import { onMounted, ref, watch } from 'vue'
+//import GroupArisanSearch from '@/modules/MasterData/GroupArisan/components/GroupArisanSearch.vue'
+//import PutaranArisanForm from '@/modules/Transaksi/PutaranArisan/components/PutaranArisanForm.vue'
+import { usePutaranArisanStore } from '@/modules/Transaksi/PutaranArisan/stores/Participants';
+import { useNotifyStore } from '@/stores/notify';
 
-const store = useParticipantsStore()
+const store = usePutaranArisanStore()
 const notify = useNotifyStore()
-
-const search = ref('')
-const showModalSearch = ref(false)
-const showModalAdd = ref(false)
-const formRef = ref(null)
-
-const groupkode = ref('')
-const participantkode = ref('')
-const groupname = ref('')
-
-const headers = [
-  { title: 'Id', key: 'id', sortable: false },
-  { title: 'Id Peserta', key: 'user_id', sortable: false },
-  { title: 'Nama Peserta', key: 'user_name', sortable: false },
-  { title: 'Nama Group', key: 'group_name', sortable: false },
-  { title: 'Tanggal Join', key: 'join_date', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false },
-]
-
-const form = ref({
-  username: [],
-  group_id: '',
-})
-
-function openshowModalSearch() {
-  showModalSearch.value = true
-}
-
-// Child memilih row
-function setSelected(item) {
-  groupkode.value = item.kode
-  groupname.value = item.name
-  showModalSearch.value = false
-}
-
-
-const deleteItem = async (item) => {
-  participantkode.value = item.id
-  console.log('delete =>', item)
-
-  if (confirm('Are you sure you want to remove this item?')) {
-    await store.remove(participantkode.value)
-    await store.fetch()
-  }
-}
-
-
-
-function openshowModalAdd() {
-
-  if (!groupkode.value) {
-    notify.notify(
-      'Silakan pilih Kode Arisan terlebih dahulu',
-      'warning'
-    )
-    return
-  }
-  showModalAdd.value = true
-}
-
-// WATCH kode -> auto reload datatable
-watch(groupkode, async val => {
-  if (!val) {
-    store.items = []
-    return
-  }
-  await store.fetch(val)
-})
-
-// load awal (kosong)
-onMounted(() => store.fetch(''))
-
-const save = async () => {
-  if (!formRef.value) return
-
-  const { valid } = await formRef.value.validate()
-  if (!valid) return
-
-  try {
-    await store.create({
-      group_id: groupkode.value,
-      users: form.value.username,
-    })
-
-    showModalAdd.value = false
-    await store.fetch(groupkode.value)
-  } catch (e) {
-    console.error(e)
-  }
-}
-
 
 </script>
 
@@ -108,7 +15,7 @@ const save = async () => {
     <!-- INPUT KODE + BUTTON SEARCH -->
     <VRow>
       <VCol cols="12" md="12">
-        <VCard title="Participants of Arisan">
+        <VCard title="Putaran Arisan">
           <VDivider />
 
           <VCardText>
@@ -136,7 +43,7 @@ const save = async () => {
                     </VCol>
 
                     <VCol cols="2">
-                      <VBtn color="primary" @click="openshowModalSearch">Search</VBtn>
+                      <VBtn color="primary" @click="openshowModalSearch">Cari Arisan</VBtn>
                     </VCol>
 
                   </VRow>
@@ -176,19 +83,7 @@ const save = async () => {
 
   </div>
 
-  <!-- MODAL -->
-  <BaseModalForm v-model="showModalSearch" title="Search Arisan">
-    <GroupArisanSearch ref="formRef" @choose="setSelected" />
-    <template #actions>
-      <VBtn variant="outlined" @click="showModalSearch = false">
-        Tutup
-      </VBtn>
-    </template>
-  </BaseModalForm>
-
-  <BaseModalForm v-model="showModalAdd" title="Add Participant" @save="save">
-    <ParticipantsForm v-model="form" ref="formRef" />
-  </BaseModalForm>
+ 
 
 
 </template>

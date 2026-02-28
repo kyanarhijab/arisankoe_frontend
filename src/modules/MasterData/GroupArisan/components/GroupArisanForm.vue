@@ -8,18 +8,14 @@
             {{ field.label }}
           </label>
         </VCol>
-
         <!-- Input kanan -->
         <VCol cols="12" md="9">
-
           <!-- Input Amount (hanya satu!) -->
           <VTextField v-if="field.model === 'amount'" v-model="amountFormatted" variant="outlined" density="compact"
             hide-details="auto" v-bind="field.props" />
-
           <!-- Input TextField umum (kecuali amount) -->
           <VTextField v-else-if="field.component === 'VTextField'" v-model="formModel[field.model]" variant="outlined"
             density="compact" hide-details="auto" v-bind="field.props" />
-
           <!-- Select -->
           <VSelect v-else-if="field.component === 'VSelect'" :id="field.id" v-model="formModel[field.model]"
             v-bind="field.props" variant="outlined" density="compact" hide-details />
@@ -81,35 +77,35 @@ const fields = [
   },
   {
     id: 'name',
-    label: 'Name',
+    label: 'Nama',
     model: 'name',
     component: 'VTextField',
     props: { rules: [rules.required] },
   },
   {
     id: 'description',
-    label: 'Description',
+    label: 'Keterangan',
     model: 'description',
     component: 'VTextField',
     props: { rules: [rules.required] },
   },
   {
     id: 'total_rounds',
-    label: 'Total Rounds',
+    label: 'Total Putaran',
     model: 'total_rounds',
     component: 'VTextField',
     props: { type: 'number', rules: [rules.required] },
   },
   {
     id: 'amount',
-    label: 'Amount',
+    label: 'Nilai',
     model: 'amount',
     component: 'VTextField',
     props: { rules: [rules.required] },
   },
   {
     id: 'start_date',
-    label: 'Start Date',
+    label: 'Tanggal Mulai',
     model: 'start_date',
     component: 'VTextField',
     props: { type: 'date', rules: [rules.required] },
@@ -133,7 +129,6 @@ defineExpose({
   },
 })
 </script>
-
 
 <style scoped>
 .text-md-right {

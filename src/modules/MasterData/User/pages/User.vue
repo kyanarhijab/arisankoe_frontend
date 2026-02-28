@@ -8,8 +8,6 @@ const store = useUserStore()
 const search = ref('')
 const showModal = ref(false)
 const isEdit = ref(false)
-
-// ⭐ Tambahkan ini
 const formRef = ref(null)
 
 const form = ref({
@@ -22,7 +20,7 @@ const form = ref({
 
 const headers = [
   { title: 'Username', key: 'username' },
-  { title: 'Name', key: 'name' },
+  { title: 'Nama', key: 'name' },
   { title: 'Password', key: 'password' },
   { title: 'Email', key: 'email' },
   { title: 'Role', key: 'role' },
@@ -53,7 +51,7 @@ const save = async () => {
   const { valid } = await formRef.value.validate()
 
   if (!valid) {
-    console.warn("Invalid form submission")
+    //console.warn("Invalid form submission")
     return
   }
 
@@ -67,12 +65,12 @@ const save = async () => {
     await store.fetch()
 
   } catch (err) {
-    console.error("Gagal menyimpan:", err)
+    //console.error("Gagal menyimpan:", err)
   }
 }
 
 async function del(id) {
-  if (confirm('Are you sure you want to remove this item?')) {
+  if (confirm('Apakah Anda yakin ingin menghapus data ini ?')) {
     await store.remove(id)
     await store.fetch()
   }
@@ -88,24 +86,24 @@ onMounted(() => store.fetch())
       <div class="d-flex align-center gap-2">
         <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line" variant="solo-filled"
           density="compact" hide-details="auto" style="max-width: 220px" />
-        <VBtn color="primary" @click="openAdd">+ Add</VBtn>
+        <VBtn color="primary" @click="openAdd">+ Tambah Data</VBtn>
       </div>
     </VCardTitle>
 
     <VDataTable :headers="headers" :items="store.items" :search="search" class="elevation-1" density="comfortable">
       <template #item.actions="{ item }">
         <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
-        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Delete</VBtn>
+        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Hapus</VBtn>
       </template>
     </VDataTable>
 
     <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit User' : 'Add User'" @save="save">
       <!-- ⭐ TARUH REF DISINI -->
       <UserForm v-model="form" :isEdit="isEdit" ref="formRef" />
-       <template #actions>
-    <VBtn variant="outlined" @click="showModal = false">Batal</VBtn>
-    <VBtn color="primary" @click="save">Simpan</VBtn>
-  </template>
+      <template #actions>
+        <VBtn variant="outlined" @click="showModal = false">Batal</VBtn>
+        <VBtn color="primary" @click="save">Simpan</VBtn>
+      </template>
     </BaseModalForm>
   </VCard>
 </template>

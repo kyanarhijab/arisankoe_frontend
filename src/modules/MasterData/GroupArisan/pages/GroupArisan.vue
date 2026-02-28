@@ -9,8 +9,6 @@ const store = useGroupArisanStore()
 const search = ref('')
 const showModal = ref(false)
 const isEdit = ref(false)
-
-// ⭐ Tambahkan ini
 const formRef = ref(null)
 
 const form = ref({
@@ -25,11 +23,11 @@ const form = ref({
 
 const headers = [
   { title: 'Kode', key: 'kode' },
-  { title: 'Name', key: 'name' },
-  { title: 'Description', key: 'description' },
-  { title: 'Total Rounds', key: 'total_rounds' },
-  { title: 'Amount', key: 'amount' },
-  { title: 'Start Date', key: 'start_date' },
+  { title: 'Nama', key: 'name' },
+  { title: 'Keterangan', key: 'description' },
+  { title: 'Total Putaran', key: 'total_rounds' },
+  { title: 'Nilai', key: 'amount' },
+  { title: 'Tanggal Mulai', key: 'start_date' },
   { title: 'Status', key: 'status' },
   { title: 'Aksi', key: 'actions', sortable: false },
 ]
@@ -65,20 +63,20 @@ function openEdit(item) {
 
 const save = async () => {
   if (!formRef.value) {
-    console.error('❌ formRef belum siap')
+    //console.error('❌ formRef belum siap')
     return
   }
 
   const { valid } = await formRef.value.validate()
 
   if (!valid) {
-    console.warn('⚠️ Invalid form submission')
+    //console.warn('⚠️ Invalid form submission')
     return
   }
 
   const data = { ...form.value }
 
-  console.log('📦 PAYLOAD:', data)
+  //console.log('📦 PAYLOAD:', data)
 
   try {
     if (isEdit.value) {
@@ -91,13 +89,12 @@ const save = async () => {
     await store.fetch()
 
   } catch (err) {
-    console.error('❌ Gagal menyimpan:', err)
+    //console.error('❌ Gagal menyimpan:', err)
   }
 }
 
-
 async function del(kode) {
-  if (confirm('Are you sure you want to remove this item?')) {
+  if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
     await store.remove(kode)
     await store.fetch()
   }
@@ -113,7 +110,7 @@ onMounted(() => store.fetch())
       <div class="d-flex align-center gap-2">
         <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line" variant="solo-filled"
           density="compact" hide-details style="max-width: 220px" />
-        <VBtn color="primary" @click="openAdd">+ Add</VBtn>
+        <VBtn color="primary" @click="openAdd">+ Tambah Data</VBtn>
       </div>
     </VCardTitle>
 
@@ -124,12 +121,11 @@ onMounted(() => store.fetch())
 
       <template #item.actions="{ item }">
         <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
-        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Delete</VBtn>
+        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Hapus</VBtn>
       </template>
     </VDataTable>
 
-    <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit Group' : 'Add Group'" @save="save">
-      <!-- ⭐ TARUH REF DISINI -->
+    <BaseModalForm v-model="showModal" :title="isEdit ? 'Edit Group' : 'Tambah Group'" @save="save">
       <GroupArisanForm :key="isEdit ? 'edit' : 'add'" v-model="form" :isEdit="isEdit" ref="formRef" />
     </BaseModalForm>
   </VCard>

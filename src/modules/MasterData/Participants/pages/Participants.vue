@@ -48,13 +48,11 @@ const deleteItem = async (item) => {
   participantkode.value = item.id
   console.log('delete =>', item)
 
-  if (confirm('Are you sure you want to remove this item?')) {
+  if (confirm('Apakah Anda yakin ingin menghapus data ini ?')) {
     await store.remove(participantkode.value)
     await store.fetch()
   }
 }
-
-
 
 function openshowModalAdd() {
 
@@ -95,10 +93,9 @@ const save = async () => {
     showModalAdd.value = false
     await store.fetch(groupkode.value)
   } catch (e) {
-    console.error(e)
+    //console.error(e)
   }
 }
-
 
 </script>
 
@@ -108,7 +105,7 @@ const save = async () => {
     <!-- INPUT KODE + BUTTON SEARCH -->
     <VRow>
       <VCol cols="12" md="12">
-        <VCard title="Participants of Arisan">
+        <VCard title="Peserta Arisan">
           <VDivider />
 
           <VCardText>
@@ -136,7 +133,7 @@ const save = async () => {
                     </VCol>
 
                     <VCol cols="2">
-                      <VBtn color="primary" @click="openshowModalSearch">Search</VBtn>
+                      <VBtn color="primary" @click="openshowModalSearch">Cari Data</VBtn>
                     </VCol>
 
                   </VRow>
@@ -157,7 +154,7 @@ const save = async () => {
             <div class="d-flex align-center gap-2 w-25">
               <VTextField v-model="search" placeholder="Search..." prepend-inner-icon="ri-search-2-line"
                 variant="solo-filled" density="compact" hide-details class="flex-grow-1" />
-              <VBtn color="primary" @click="openshowModalAdd">+ Add</VBtn>
+              <VBtn color="primary" @click="openshowModalAdd">+ Tambah Data</VBtn>
             </div>
           </VCardTitle>
 
@@ -165,7 +162,7 @@ const save = async () => {
             <template #item.actions="{ item }">
               <div class="d-flex gap-2">
                 <VBtn size="x-small" color="error" @click="deleteItem(item)">
-                  <VIcon icon="ri-delete-bin-6-line" class="mr-1" /> delete
+                  <VIcon icon="ri-delete-bin-6-line" class="mr-1" /> Hapus
                 </VBtn>
               </div>
             </template>

@@ -8,7 +8,7 @@
     <div class="search-wrapper">
       <VTextField
         v-model="search"
-        placeholder="Search..."
+        placeholder="Cari..."
         prepend-inner-icon="ri-search-2-line"
         variant="solo-filled"
         density="compact"
@@ -21,9 +21,9 @@
     <VDataTable
       :headers="[
         { title: 'Kode', key: 'kode' },
-        { title: 'Name', key: 'name' },
-        { title: 'Description', key: 'description' },
-        { title: 'Action', key: 'actions', sortable: false },
+        { title: 'Nama', key: 'name' },
+        { title: 'Keterangan', key: 'description' },
+        { title: 'Aksi', key: 'actions', sortable: false },
       ]"
       :items="store.items"
       :search="search"
@@ -41,7 +41,7 @@
               icon="ri-add-line"
               class="mr-1"
             />
-            choose
+            Pilih Data
           </VBtn>
         </div>
       </template>
