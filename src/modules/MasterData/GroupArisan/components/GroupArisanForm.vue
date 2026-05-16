@@ -38,14 +38,18 @@ const emit = defineEmits(['update:modelValue'])
 
 const formRef = ref(null)
 
+// Gunakan reactive untuk local state agar sinkron dengan form
 const formModel = reactive({ ...props.modelValue })
 
+
+// Sinkronisasi dari Parent ke Child jika props berubah (misal saat pindah antar data edit)
 watch(
   () => props.modelValue,
   val => Object.assign(formModel, val),
   { deep: true }
 )
 
+// Sinkronisasi dari Child ke Parent
 watch(
   formModel,
   val => emit('update:modelValue', { ...val }),
@@ -56,6 +60,9 @@ const rules = {
   required: v => !!v || 'Wajib diisi',
 }
 
+/**
+ * Logic khusus untuk format Rupiah
+ */
 const amountFormatted = computed({
   get: () => formatRupiah(formModel.amount),
   set: val => {

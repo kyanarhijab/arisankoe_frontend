@@ -9,34 +9,44 @@ const props = defineProps({
 </script>
 
 <template>
-  <li
-    class="nav-link"
-    :class="{ disabled: item.disabled }"
-  >
-    <!-- Gunakan 'RouterLink' langsung, bukan sebagai ekspresi -->
-    <component
-      :is="item.path ? 'RouterLink' : 'a'"
-      :to="item.path || undefined"
-      :href="!item.path ? item.href || '#' : undefined"
-      :target="item.target"
-    >
-      <VIcon
-        :icon="item.icon || 'ri-checkbox-blank-circle-line'"
-        class="nav-item-icon"
-      />
-      <span class="nav-item-title">
-        {{ item.title }}
-      </span>
+  <li class="nav-link" :class="{ disabled: item.disabled }">
 
-      <span
-        v-if="item.badgeContent"
-        class="nav-item-badge"
-        :class="item.badgeClass"
-      >
-        {{ item.badgeContent }}
-      </span>
-    </component>
-  </li>
+  <!-- NEW TAB -->
+  <a
+    v-if="item.newTab"
+    :href="item.path"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <VIcon
+      :icon="item.icon || 'ri-checkbox-blank-circle-line'"
+      class="nav-item-icon"
+    />
+    <span class="nav-item-title">{{ item.title }}</span>
+  </a>
+
+  <!-- NORMAL ROUTE -->
+  <RouterLink
+    v-else-if="item.path"
+    :to="item.path"
+  >
+    <VIcon
+      :icon="item.icon || 'ri-checkbox-blank-circle-line'"
+      class="nav-item-icon"
+    />
+    <span class="nav-item-title">{{ item.title }}</span>
+  </RouterLink>
+
+  <!-- FALLBACK -->
+  <a v-else :href="item.href || '#'">
+    <VIcon
+      :icon="item.icon || 'ri-checkbox-blank-circle-line'"
+      class="nav-item-icon"
+    />
+    <span class="nav-item-title">{{ item.title }}</span>
+  </a>
+
+</li>
 </template>
 
 <style lang="scss">

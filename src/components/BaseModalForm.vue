@@ -1,5 +1,5 @@
 <template>
-  <VDialog :model-value="modelValue" 
+  <VDialog :model-value="modelValue" persistent
            @update:model-value="emit('update:modelValue', $event)" 
            max-width="700px">
     <VCard>

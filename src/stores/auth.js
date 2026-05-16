@@ -1,4 +1,4 @@
-import axios from 'axios'
+import api from '@/services/api'
 import { defineStore } from 'pinia'
 import { useMenuStore } from './menu'
 
@@ -19,11 +19,7 @@ export const useAuthStore = defineStore('auth', {
       this.token = token
 
       try {
-        const res = await axios.get('/api/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+       const res = await api.get('/me')
         this.user = res.data
       } catch (e) {
         this.logout()
@@ -34,10 +30,7 @@ export const useAuthStore = defineStore('auth', {
   },
     async login(username, password) {
       try {
-        const res = await axios.post(
-          'http://localhost/arisankoe-backend/public/api/login',
-          { username, password }
-        )
+        const res = await api.post('/login', { username, password })
 
         this.token = res.data.token
         this.user = res.data.user

@@ -1,6 +1,8 @@
 import api from '@/services/api'
 import { useNotifyStore } from '@/stores/notify'
+import { saveAs } from 'file-saver'
 import { defineStore } from 'pinia'
+import * as XLSX from 'xlsx'
 
 export const useGroupArisanStore = defineStore('groupArisan', {
   state: () => ({
@@ -33,10 +35,7 @@ export const useGroupArisanStore = defineStore('groupArisan', {
         useNotifyStore().notify('Data grup arisan telah berhasil ditambahkan.', 'success')
         this.fetch()
       } catch (err) {
-        useNotifyStore().notify(
-          err.response?.data?.message || 'Gagal menambahkan Group Arisan',
-          'error'
-        )
+        useNotifyStore().notify(err.response?.data?.message || 'Gagal menambahkan Group Arisan', 'error')
       }
     },
 
@@ -53,8 +52,6 @@ export const useGroupArisanStore = defineStore('groupArisan', {
       }
     },
 
-    
-
     // =====================
     // DELETE USER
     // =====================
@@ -67,5 +64,65 @@ export const useGroupArisanStore = defineStore('groupArisan', {
         useNotifyStore().notify('Gagal hapus Group Arisan', 'error')
       }
     },
+       
+    async exportExcelFile(group_id) {
+      try {
+      const res = await api.get('/groups_export', {
+        params: { group_id }
+      })
+
+      const rawData = res.data.data
+
+      if (!rawData.length) {
+        useNotifyStore().notify('Data kosong', 'error')
+        return
+      }
+
+      // 🔥 ambil semua key (buat header dinamis)
+      const keys = Object.keys(rawData[0])
+
+      // 🔥 urutkan: nama dulu, baru 1..n
+      const headers = [
+        'nama',
+        ...keys.filter(k => k !== 'nama').sort((a, b) => Number(a) - Number(b))
+      ]
+
+      // 🔥 mapping sesuai urutan header
+      const data = rawData.map(row => {
+        const newRow = {}
+        headers.forEach(h => {
+          newRow[h] = row[h]
+        })
+        return newRow
+      })
+
+      // 🔥 convert ke excel
+      const worksheet = XLSX.utils.json_to_sheet(data)
+      const workbook = XLSX.utils.book_new()
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Arisan')
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      })
+
+      const file = new Blob([excelBuffer], {
+        type: 'application/octet-stream',
+      })
+
+      saveAs(file, `arisan-${group_id}.xlsx`)
+
+      useNotifyStore().notify('Export berhasil ✅', 'success')
+
+    } catch (err) {
+      console.error(err)
+      useNotifyStore().notify('Gagal export', 'error')
+    }
   },
+
+  },
+
+  
+  
 })

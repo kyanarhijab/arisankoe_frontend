@@ -1,17 +1,23 @@
 <script setup>
-import BaseModalForm from '@/components/BaseModalForm.vue'
-import GroupArisanForm from '@/modules/MasterData/GroupArisan/components/GroupArisanForm.vue'
 import { useGroupArisanStore } from '@/modules/MasterData/GroupArisan/stores/GroupArisan'
 import { formatRupiah } from '@/utils/formatRupiah'
 import { nextTick, onMounted, ref } from 'vue'
 
+
+//components
+import BaseModalForm from '@/components/BaseModalForm.vue'
+import GroupArisanForm from '@/modules/MasterData/GroupArisan/components/GroupArisanForm.vue'
+
+
 const store = useGroupArisanStore()
+
+// State
 const search = ref('')
 const showModal = ref(false)
 const isEdit = ref(false)
 const formRef = ref(null)
 
-const form = ref({
+const initialForm = {
   kode: null,
   name: '',
   description: '',
@@ -19,7 +25,9 @@ const form = ref({
   amount: '',
   start_date: '',
   status: '',
-})
+}
+
+const form = ref({ ...initialForm })
 
 const headers = [
   { title: 'Kode', key: 'kode' },
@@ -32,18 +40,11 @@ const headers = [
   { title: 'Aksi', key: 'actions', sortable: false },
 ]
 
-function openAdd() {
-  Object.assign(form.value, {
-    kode: null,
-    name: '',
-    description: '',
-    total_rounds: '',
-    amount: '',
-    start_date: '',
-    status: '',
-  })
+// Methods
 
+const openAdd = () => {
   isEdit.value = false
+  Object.assign(form.value, initialForm)
   showModal.value = true
 
   nextTick(() => {
@@ -51,9 +52,9 @@ function openAdd() {
   })
 }
 
-function openEdit(item) {
-  Object.assign(form.value, item)
+const openEdit = (item) => {
   isEdit.value = true
+  Object.assign(form.value, item)
   showModal.value = true
 
   nextTick(() => {
@@ -62,45 +63,46 @@ function openEdit(item) {
 }
 
 const save = async () => {
-  if (!formRef.value) {
-    //console.error('❌ formRef belum siap')
-    return
-  }
+  if (!formRef.value) return
 
   const { valid } = await formRef.value.validate()
-
-  if (!valid) {
-    //console.warn('⚠️ Invalid form submission')
-    return
-  }
-
-  const data = { ...form.value }
-
-  //console.log('📦 PAYLOAD:', data)
+  if (!valid) return
 
   try {
     if (isEdit.value) {
-      await store.update(data)
+      await store.update(form.value)
     } else {
-      await store.create(data)
+      await store.create(form.value)
     }
 
     showModal.value = false
     await store.fetch()
-
   } catch (err) {
-    //console.error('❌ Gagal menyimpan:', err)
+    console.error('Error saving data:', err)
   }
 }
 
-async function del(kode) {
+const del = async (id) => {
   if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-    await store.remove(kode)
-    await store.fetch()
+    try {
+      await store.remove(id)
+      await store.fetch()
+    } catch (err) {
+      console.error('Error deleting data:', err)
+    }
   }
 }
 
-onMounted(() => store.fetch())
+onMounted(() => {
+  store.fetch()
+})
+
+
+async function cetak(id) {
+  await store.exportExcelFile(id)
+}
+
+
 </script>
 
 <template>
@@ -121,7 +123,8 @@ onMounted(() => store.fetch())
 
       <template #item.actions="{ item }">
         <VBtn size="small" color="primary" variant="outlined" class="me-2" @click="openEdit(item)">Edit</VBtn>
-        <VBtn size="small" color="error" variant="outlined" @click="del(item.id)">Hapus</VBtn>
+        <VBtn size="small" color="error" variant="outlined" class="me-2" @click="del(item.id)">Hapus</VBtn>
+        <VBtn size="small" color="info" variant="outlined" @click="cetak(item.kode)">Cetak</VBtn>
       </template>
     </VDataTable>
 

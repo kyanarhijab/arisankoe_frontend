@@ -2,7 +2,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost/arisankoe-backend/public/api', // ganti sesuai backend kamu
+  baseURL: '/api', 
+  timeout: 10000,// ganti sesuai backend kamu
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,6 +35,9 @@ api.interceptors.response.use(
 // Tambahkan token otomatis ke semua request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
+
+  //console.log('=== INTERCEPTOR ===')
+  //console.log('TOKEN:', token)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }

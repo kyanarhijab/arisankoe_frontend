@@ -24,9 +24,6 @@
 import axios from '@/services/api'
 import { onMounted, reactive, ref, watch } from 'vue'
 
-/* =============================
-   PROPS & EMIT
-============================= */
 const props = defineProps({
   modelValue: { type: Object, required: true },
   isEdit: Boolean,
@@ -34,58 +31,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-/* =============================
-   FORM REF
-============================= */
 const formRef = ref(null)
 
-/* =============================
-   FORM MODEL (ARRAY UNTUK MULTIPLE)
-============================= */
 const formModel = reactive({
   username: []
 })
-
-/* =============================
-   MASTER DATA
-============================= */
 const masterUser = ref([])
 
-const fetchMasterUser = async () => {
-  try {
-    const res = await axios.get('/users')
 
-    // JIKA API: { data: [...] }
-    masterUser.value = Array.isArray(res.data)
-      ? res.data
-      : res.data.data
-
-  } catch (err) {
-    //console.error(err)
-    masterUser.value = [] // fallback aman
-  }
-}
-
-onMounted(fetchMasterUser)
-
-/* =============================
-   SYNC PARENT ↔ CHILD
-============================= */
-watch(
-  () => props.modelValue,
-  val => Object.assign(formModel, val),
-  { deep: true }
-)
-
-watch(
-  formModel,
-  val => emit('update:modelValue', { ...val }),
-  { deep: true }
-)
-
-/* =============================
-   FIELD CONFIG
-============================= */
 const fields = [
   {
     id: 'username',
@@ -105,9 +58,37 @@ const fields = [
   }
 ]
 
-/* =============================
-   EXPOSE KE PARENT
-============================= */
+
+/* --- Fetch Data --- */
+const fetchMasterUser = async () => {
+  try {
+    const res = await axios.get('/users')
+    masterUser.value = Array.isArray(res.data)
+      ? res.data
+      : res.data.data
+  } catch (err) {
+    masterUser.value = [] // fallback aman
+  }
+}
+
+onMounted(fetchMasterUser)
+
+/* --- Syncing --- */
+// Hanya assign jika ada perubahan nyata dari props
+watch(
+  () => props.modelValue,
+  val => Object.assign(formModel, val),
+  { deep: true }
+)
+// Emit balik ke parent setiap ada perubahan di form local
+watch(
+  formModel,
+  val => emit('update:modelValue', { ...val }),
+  { deep: true }
+)
+
+
+/* --- Validation & Expose --- */
 defineExpose({
   formData: formModel,
 

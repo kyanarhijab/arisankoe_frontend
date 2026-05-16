@@ -1,14 +1,27 @@
-import { fileURLToPath } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import { fileURLToPath } from 'node:url'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import vuetify from 'vite-plugin-vuetify'
 import svgLoader from 'vite-svg-loader'
 
+
+
 // https://vitejs.dev/config/
 export default defineConfig({
+   server: {
+    port: 5173,
+    
+    proxy: {
+      '/api': {
+        target: 'http://localhost/arisankoe-backend/public',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
   plugins: [
     vue(),
     vueJsx(),

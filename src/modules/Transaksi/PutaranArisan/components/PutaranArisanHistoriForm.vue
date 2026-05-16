@@ -1,6 +1,6 @@
 <template>
   <VForm
-    ref="formRef"
+    ref="historiFormRef"
     class="pa-4"
     lazy-validation
   >
@@ -22,10 +22,11 @@
       :headers="[
         { title: 'Kode', key: 'kode' },
         { title: 'Nama', key: 'name' },
-        { title: 'Keterangan', key: 'description' },
+        { title: 'Putaran', key: 'putaran' },
+        { title: 'Tanggal', key: 'tgl_putaran' },
         { title: 'Aksi', key: 'actions', sortable: false },
       ]"
-      :items="store.items"
+       :items="store.itemHistori"
       :search="search"
       density="compact"
     >
@@ -50,30 +51,29 @@
 </template>
 
 <script setup>
-import { useGroupArisanStore } from '@/modules/MasterData/GroupArisan/stores/GroupArisan'
+import { usePutaranArisanStore } from '@/modules/Transaksi/PutaranArisan/stores/PutaranArisan'
 import debounce from 'lodash/debounce'
-import { onMounted, ref, watch } from 'vue'
+import { ref } from 'vue'
 
-const store = useGroupArisanStore()
+const store = usePutaranArisanStore()
 const search = ref('')
 
-const emit = defineEmits(['Choose'])
+const emit = defineEmits(['choose-histori'])
+
 
 // FETCH otomatis saat mengetik
 watch(
   search,
   debounce((val) => {
-    store.fetch(val)
+    store.histori_arisan(val)
   }, 800)
 )
 
-
-
 // LOAD awal
-onMounted(() => store.fetch())
+onMounted(() => store.histori_arisan())
 
 function pilihRow(item) {
-  emit('Choose', item) // kirim data ke parent
+  emit('choose-histori', item) // kirim data ke parent
 }
 </script>
 
